@@ -1,4 +1,5 @@
 import LinksDropdown from "./LinksDropdown"
+import LoginAndRegist from "./LoginAndRegist"
 import Logo from "./Logo"
 import NavSearch from "./NavSearch"
 
@@ -9,6 +10,7 @@ function Navbar() {
         <Logo />
         <NavSearch />
         <LinksDropdown />
+        <LoginAndRegist />
       </div>
     </nav>
   )
