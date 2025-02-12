@@ -4,6 +4,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
+  DropdownMenuSeparator
 } from '@/components/ui/dropdown-menu'
 import { 
   Avatar,
@@ -13,6 +14,8 @@ import {
 import Link from 'next/link';
 import { User } from "lucide-react"
 import { links } from "@/utils/links"
+import SignOutLink from "./SignOutLink"
+import { SignedOut, SignedIn, SignInButton, SignUpButton } from '@clerk/nextjs';
 
 function LinksDropdown() {
   return (
@@ -29,12 +32,28 @@ function LinksDropdown() {
 
       {/* 下拉選單內容 */}
       <DropdownMenuContent align="end" className="w-22">
-        {links.map(({ href, label, icon: Icon }) => (
-          <Link key={href} href={href} className="flex items-center gap-2 p-2 text-gray-700 hover:text-primary">
-            <Icon className="h-5 w-5" />
-            <span>{label}</span>
-          </Link>
-        ))}
+        {/* 未登入顯示 */}
+        <SignedOut>
+          <SignInButton mode='modal'>
+            <button className='w-full text-center py-2 text-gray-700 hover:text-primary'>登入</button>
+          </SignInButton>
+          <SignUpButton>
+            <button className='w-full text-center py-2 text-gray-700 hover:text-primary'>註冊</button>
+          </SignUpButton>
+        </SignedOut>
+
+        {/* 登入的情況下顯示 */}
+        <SignedIn>
+          {links.map(({ href, label, icon: Icon }) => (
+            <Link key={href} href={href} className="flex items-center gap-2 p-2 text-gray-700 hover:text-primary">
+              <Icon className="h-5 w-5" />
+              <span>{label}</span>
+            </Link>
+          ))}
+          <DropdownMenuSeparator />
+          <SignOutLink />
+        </SignedIn>
+        
       </DropdownMenuContent>
     </DropdownMenu>
   )
