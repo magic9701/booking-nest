@@ -37,7 +37,7 @@ function LinksDropdown() {
           <SignInButton mode='modal'>
             <button className='w-full text-center py-2 text-gray-700 hover:text-primary'>登入</button>
           </SignInButton>
-          <SignUpButton>
+          <SignUpButton mode='modal'>
             <button className='w-full text-center py-2 text-gray-700 hover:text-primary'>註冊</button>
           </SignUpButton>
         </SignedOut>
