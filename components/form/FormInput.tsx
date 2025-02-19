@@ -7,10 +7,11 @@ type FormInputProps = {
   label?:string
   defaultValue?:string
   placeholder?:string
+  disabled?: boolean
 }
 
 function FormInput(props: FormInputProps) {
-  const { name, type, label, defaultValue, placeholder } = props
+  const { name, type, label, defaultValue, placeholder, disabled } = props
   return (
     <div className='mb-2'>
       <Label htmlFor={name}>{label || name}</Label>
@@ -20,6 +21,7 @@ function FormInput(props: FormInputProps) {
         type={type}
         placeholder={placeholder}
         defaultValue={defaultValue}
+        disabled={disabled}
         required
       />
     </div>

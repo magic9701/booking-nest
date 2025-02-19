@@ -2,8 +2,12 @@ import { SubmitButton } from "@/components/form/Buttons";
 import FormContainer from "@/components/form/FormContainer";
 import FormInput from "@/components/form/FormInput";
 import { createProfileAction } from "@/utils/action";
+import { currentUser } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 
-function CreateProfilePage() {
+async function CreateProfilePage() {
+  const user = await currentUser()
+  if(user?.privateMetadata.hasProfile) redirect('/')
   return (
     <section className='flex flex-col items-center w-full'>
       <h1 className="mb-6 ml-1 text-2xl">歡迎加入Booking Nest！請輸入你的個人資料！</h1>
@@ -12,7 +16,7 @@ function CreateProfilePage() {
           <div className="grid grid-cols-2 gap-4 mt-4">
             <FormInput type='text' name='firstName' label='姓氏' />
             <FormInput type='text' name='lastName' label='名字' />
-            <FormInput type='text' name='userName' label='用戶名' />
+            <FormInput type='text' name='username' label='用戶名' />
           </div>
           <SubmitButton text='儲存' className="mt-8" />
         </FormContainer>
