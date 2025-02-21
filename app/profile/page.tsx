@@ -9,7 +9,7 @@ async function ProfilePage() {
 
   return (
   <section className='flex flex-col items-center w-full'>
-    <div className='border p-8 rounded-md w-full max-w-3xl'>
+    <div className='border p-8 rounded-md w-full max-w-4xl'>
       <h1 className="mb-6 text-2xl">編輯個人資料</h1>
       <ImageInputContainer
         image={profile.profileImage}
@@ -19,9 +19,9 @@ async function ProfilePage() {
       />
       <FormContainer action={updateProfileAction}>
         <div className="grid grid-cols-2 gap-4 mt-4">
-          <FormInput type='text' name='firstName' label='姓氏' defaultValue={profile.firstName}/>
-          <FormInput type='text' name='lastName' label='名字' defaultValue={profile.lastName}/>
-          <FormInput type='text' name='username' label='用戶名' defaultValue={profile.username}/>
+          <FormInput type='text' name='firstName' label='姓氏' defaultValue={profile.firstName} maxLength={50}/>
+          <FormInput type='text' name='lastName' label='名字' defaultValue={profile.lastName} maxLength={50}/>
+          <FormInput type='text' name='username' label='用戶名' defaultValue={profile.username} maxLength={20}/>
           <FormInput type='text' name='email' label='Email' defaultValue={profile.email} disabled/>
         </div>
         <SubmitButton text='儲存' className="mt-8" />

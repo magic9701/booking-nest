@@ -19,26 +19,27 @@ const geistMono = localFont({
 export const metadata: Metadata = {
   title: "BookingNest",
   description: "Book your ideal accommodation now with BookingNest, offering the best choices of hotels and unique homestays worldwide. Enjoy a simple, fast search experience to find the perfect stay that suits your needs. Start every journey here!",
-};
+}
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
   return (
     <ClerkProvider>
-      <html lang="en">
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        >
-          <Navbar />
-          <main className="container py-10">
-            {children}
-          </main>
-          <Toaster />
-        </body>
-      </html>
+        <html lang='zh'>
+          <body
+            className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+          >
+            <Navbar />
+            <main className="container py-10">
+              {children}
+            </main>
+            <Toaster />
+          </body>
+        </html>
     </ClerkProvider>
   );
 }

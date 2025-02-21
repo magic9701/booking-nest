@@ -8,7 +8,7 @@ function NavSearch() {
     <div className="relative max-w-sm w-full">
       <Input 
         type="text" 
-        placeholder="搜尋喜歡的住宿" 
+        placeholder="搜尋喜歡的住宿"
         className="pr-10 dark:bg-muted"
       />
       <Search 

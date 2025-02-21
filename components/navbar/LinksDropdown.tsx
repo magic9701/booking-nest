@@ -5,7 +5,7 @@ import {
   DropdownMenuSeparator
 } from '@/components/ui/dropdown-menu'
 import Link from 'next/link';
-import { links } from "@/utils/links"
+import { links } from "@/data/links"
 import SignOutLink from "./SignOutLink"
 import { SignedOut, SignedIn, SignInButton, SignUpButton } from '@clerk/nextjs';
 import UserIcon from './UserIcon';

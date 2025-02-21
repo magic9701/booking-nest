@@ -1,8 +1,8 @@
 'use server'
 
-import { imageSchema, profileSchema, validateWithZodSchema } from "./schemas";
+import { imageSchema, profileSchema, propertySchema, validateWithZodSchema } from "./schemas";
 import db from './db';
-import { auth, clerkClient, currentUser } from '@clerk/nextjs/server';
+import { clerkClient, currentUser } from '@clerk/nextjs/server';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { renderError } from "./helper";
@@ -12,9 +12,11 @@ import { uploadImage } from "./supabase";
 const getAuthUser = async() => {
   const user = await currentUser()
 
-  if(!user) throw new Error('請登入再執行')
+  if(!user){
+    throw new Error('請登入再執行')
+  }
 
-  if(!user.privateMetadata.hasProfile) redirect('/profile/create')
+  if(!user.privateMetadata.hasProfile) redirect('/:loacle/profile/create')
   
   return user
 }
@@ -92,7 +94,7 @@ export const fetchProfile = async () => {
       clerkId: user.id
     },
   })
-  if (!profile) redirect('/profile/create')
+  if (!profile) redirect('/:loacle/profile/create')
   return profile
 }
 
@@ -125,7 +127,7 @@ export const updateProfileAction = async (
       data: validatedFields
     })
 
-    revalidatePath('/profile')
+    revalidatePath('/:loacle/profile')
     return { message: '修改個人資料成功' }
   } catch (error) {
     return renderError(error)
@@ -151,9 +153,36 @@ export const updateProfileImageAction = async (
         profileImage: fullPath,
       },
     });
-    revalidatePath('/profile');
+    revalidatePath('/:loacle/profile');
     return { message: '更新頭貼成功' };
   } catch (error) {
     return renderError(error);
   }
-};
+}
+
+// 創建房源
+export const createPropertyAction = async (
+  prevState: any,
+  formData: FormData
+): Promise<{ message: string }> => {
+  const user = await getAuthUser()
+  try {
+    const rawData = Object.fromEntries(formData)
+    const file = formData.get('image') as File;
+    const validatedFields = validateWithZodSchema(propertySchema, rawData)
+    const validatedFile = validateWithZodSchema(imageSchema, { image: file })
+    const fullPath = await uploadImage(validatedFile.image)
+
+    await db.property.create({
+      data: {
+        ...validatedFields,
+        image: fullPath,
+        profileId: user.id,
+      },
+    })
+
+    return { message: '已新增房源' };
+  } catch (error) {
+    return renderError(error)
+  }
+}
