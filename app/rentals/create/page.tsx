@@ -5,6 +5,8 @@ import { SubmitButton } from '@/components/form/Buttons';
 import PriceInput from '@/components/form/PriceInput';
 import SelectInput from '@/components/form/SelectInput';
 import { categories } from '@/data/categories'
+import FormTextarea from '@/components/form/FormTextarea';
+import AddressInputContainer from '@/components/form/AddressInputContainer';
 
 function CreatePropertyPage() {
   return (
@@ -28,6 +30,19 @@ function CreatePropertyPage() {
               }))}
             />
           </div>
+          <FormTextarea
+            name="description"
+            label="房源介紹"
+            placeholder="請輸入詳細的資訊，幫助用戶更了解你的房源，可以使用ChatGPT幫忙呦!"
+            minLength={10}
+            maxLength={1000}
+            rows={6}
+            required
+          />
+          <div className='grid lg:grid-cols-1'>
+            <AddressInputContainer />
+          </div>
+
           <SubmitButton text='創建房源' />
         </FormContainer>
       </div>

@@ -71,7 +71,17 @@ export const propertySchema = z.object({
       message: '描述的字數必須介於 10 到 1000 之間',
     }
   ),
-  country: z.string(),
+  address: z.string(),
+  mapPosition: z.object({
+    lat: z
+      .number()
+      .min(-90, { message: '緯度必須在 -90 到 90 之間。' })
+      .max(90, { message: '緯度必須在 -90 到 90 之間。' }),
+    lng: z
+      .number()
+      .min(-180, { message: '經度必須在 -180 到 180 之間。' })
+      .max(180, { message: '經度必須在 -180 到 180 之間。' }),
+  }),
   guests: z.coerce.number().int().min(0, {
     message: '可容納人數至少為 1 位',
   }),
