@@ -16,6 +16,7 @@ type SelectInputProps = {
   placeholder: string;
   items: Item[];
   defaultValue?: string;
+  required?: boolean
 };
 
 type Item = {
@@ -32,7 +33,7 @@ function SelectInput(props: SelectInputProps) {
           {props.label}
         </Label>
       )}
-      <Select name={props.name} defaultValue={props.defaultValue}>
+      <Select name={props.name} defaultValue={props.defaultValue} required={props.required}>
         <SelectTrigger>
           <SelectValue placeholder={props.placeholder} />
         </SelectTrigger>

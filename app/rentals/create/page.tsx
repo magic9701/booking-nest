@@ -20,6 +20,7 @@ function CreatePropertyPage() {
               label="房型類別"
               name="category"
               placeholder="請選擇一個類別"
+              required
               items={categories.map(({ key, label, icon }) => ({
                 value: key,
                 label,
