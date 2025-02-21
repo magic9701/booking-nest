@@ -21,7 +21,7 @@ type SelectInputProps = {
 type Item = {
   value: string;
   label: string;
-  icon: IconType;
+  icon?: IconType;
 };
 
 function SelectInput(props: SelectInputProps) {
@@ -41,7 +41,7 @@ function SelectInput(props: SelectInputProps) {
             {props.items.map((item) => (
               <SelectItem key={item.value} value={item.value}>
                 <div className="flex items-center gap-2">
-                  <item.icon className="w-5 h-5" />
+                  {item.icon && <item.icon className="w-5 h-5" />}
                   {item.label}
                 </div>
               </SelectItem>
@@ -50,7 +50,7 @@ function SelectInput(props: SelectInputProps) {
         </SelectContent>
       </Select>
     </div>
-  )
+  );
 }
 
 export default SelectInput;
