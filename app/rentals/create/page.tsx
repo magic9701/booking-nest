@@ -7,6 +7,7 @@ import SelectInput from '@/components/form/SelectInput';
 import { categories } from '@/data/categories'
 import FormTextarea from '@/components/form/FormTextarea';
 import AddressInputContainer from '@/components/form/AddressInputContainer';
+import CounterInput from '@/components/form/CounterInput';
 
 function CreatePropertyPage() {
   return (
@@ -42,7 +43,7 @@ function CreatePropertyPage() {
           <div className='grid lg:grid-cols-1'>
             <AddressInputContainer />
           </div>
-
+          <CounterInput title='123'/>
           <SubmitButton text='創建房源' />
         </FormContainer>
       </div>
