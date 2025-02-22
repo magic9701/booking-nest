@@ -5,6 +5,7 @@ import { SubmitButton } from '@/components/form/Buttons';
 import PriceInput from '@/components/form/PriceInput';
 import SelectInput from '@/components/form/SelectInput';
 import { categories } from '@/data/categories'
+import { accomodationDetails } from '@/data/accmodation'
 import FormTextarea from '@/components/form/FormTextarea';
 import AddressInputContainer from '@/components/form/AddressInputContainer';
 import CounterInput from '@/components/form/CounterInput';
@@ -43,7 +44,12 @@ function CreatePropertyPage() {
           <div className='grid lg:grid-cols-1'>
             <AddressInputContainer />
           </div>
-          <CounterInput title='123'/>
+          <div className='flex flex-col gap-4 mb-4'>
+            <span>房間資訊</span>
+            {accomodationDetails.map((detail) => (
+              <CounterInput title={detail.label} valueKey={detail.key} key={detail.key} />
+            ))}
+          </div>
           <SubmitButton text='創建房源' />
         </FormContainer>
       </div>
