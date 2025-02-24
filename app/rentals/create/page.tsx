@@ -19,8 +19,8 @@ function CreatePropertyPage() {
         <h1 className='mb-6 text-2xl'>創建房源</h1>
         <FormContainer action={createPropertyAction}>
           <div className='grid lg:grid-cols-2 gap-x-8 gap-y-4 mb-4'>
-            <TextInput name='name' type='text' label='房源名稱' placeholder='請輸入房源名稱' maxLength={20}/>
-            <TextInput name='tagline' type='text' label='標語' placeholder='請輸入標語' maxLength={30}/>
+            <TextInput name='name' label='房源名稱' placeholder='請輸入房源名稱' maxLength={20}/>
+            <TextInput name='tagline' label='標語' placeholder='請輸入標語' maxLength={30}/>
             <NumberInput name='price' label='價格' placeholder='請輸入價格' min={0}/>
             <SelectInput
               label="房型類別"
