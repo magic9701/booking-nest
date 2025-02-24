@@ -4,9 +4,8 @@ import { useState } from 'react'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 
-type FormInputProps = {
+type TextInputProps = {
   name: string
-  type: string
   label?: string
   defaultValue?: string
   placeholder?: string
@@ -15,8 +14,8 @@ type FormInputProps = {
   className?: string
 }
 
-function FormInput(props: FormInputProps) {
-  const { name, type, label, defaultValue = '', placeholder, disabled, maxLength, className } = props
+function TextInput(props: TextInputProps) {
+  const { name, label, defaultValue = '', placeholder, disabled, maxLength, className } = props
   const [value, setValue] = useState(defaultValue)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -30,7 +29,7 @@ function FormInput(props: FormInputProps) {
         <Input 
           id={name}
           name={name}
-          type={type}
+          type='text'
           placeholder={placeholder}
           value={value}
           maxLength={maxLength}
@@ -49,4 +48,4 @@ function FormInput(props: FormInputProps) {
   )
 }
 
-export default FormInput
+export default TextInput

@@ -1,8 +1,8 @@
-import FormInput from '@/components/form/FormInput';
+import TextInput from '@/components/form/TextInput';
 import FormContainer from '@/components/form/FormContainer';
 import { createPropertyAction } from '@/utils/action'
 import { SubmitButton } from '@/components/form/Buttons';
-import PriceInput from '@/components/form/PriceInput';
+import NumberInput from '@/components/form/NumberInput';
 import SelectInput from '@/components/form/SelectInput';
 import { categories } from '@/data/categories'
 import { accomodationDetails } from '@/data/accmodation'
@@ -19,9 +19,9 @@ function CreatePropertyPage() {
         <h1 className='mb-6 text-2xl'>創建房源</h1>
         <FormContainer action={createPropertyAction}>
           <div className='grid lg:grid-cols-2 gap-x-8 gap-y-4 mb-4'>
-            <FormInput name='name' type='text' label='房源名稱' placeholder='請輸入房源名稱' maxLength={20}/>
-            <FormInput name='tagline' type='text' label='標語' placeholder='請輸入標語' maxLength={30}/>
-            <PriceInput />
+            <TextInput name='name' type='text' label='房源名稱' placeholder='請輸入房源名稱' maxLength={20}/>
+            <TextInput name='tagline' type='text' label='標語' placeholder='請輸入標語' maxLength={30}/>
+            <NumberInput name='price' label='價格' placeholder='請輸入價格' min={0}/>
             <SelectInput
               label="房型類別"
               name="category"

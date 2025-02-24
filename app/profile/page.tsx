@@ -1,6 +1,6 @@
 import { SubmitButton } from "@/components/form/Buttons";
 import FormContainer from "@/components/form/FormContainer";
-import FormInput from "@/components/form/FormInput";
+import TextInput from "@/components/form/TextInput";
 import ImageInputContainer from '@/components/form/ImageInputContainer'
 import { updateProfileAction, fetchProfile, updateProfileImageAction } from "@/utils/action";
 
@@ -19,10 +19,10 @@ async function ProfilePage() {
       />
       <FormContainer action={updateProfileAction}>
         <div className="grid grid-cols-2 gap-4 mt-4">
-          <FormInput type='text' name='firstName' label='姓氏' defaultValue={profile.firstName} maxLength={50}/>
-          <FormInput type='text' name='lastName' label='名字' defaultValue={profile.lastName} maxLength={50}/>
-          <FormInput type='text' name='username' label='用戶名' defaultValue={profile.username} maxLength={20}/>
-          <FormInput type='text' name='email' label='Email' defaultValue={profile.email} disabled/>
+          <TextInput name='firstName' label='姓氏' defaultValue={profile.firstName} maxLength={50}/>
+          <TextInput name='lastName' label='名字' defaultValue={profile.lastName} maxLength={50}/>
+          <TextInput name='username' label='用戶名' defaultValue={profile.username} maxLength={20}/>
+          <TextInput name='email' label='Email' defaultValue={profile.email} disabled/>
         </div>
         <SubmitButton text='儲存' className="mt-8" />
       </FormContainer>
