@@ -9,6 +9,8 @@ import { accomodationDetails } from '@/data/accmodation'
 import FormTextarea from '@/components/form/FormTextarea';
 import AddressInputContainer from '@/components/form/AddressInputContainer';
 import CounterInput from '@/components/form/CounterInput';
+import AmenitiesInput from '@/components/form/AmenitiesInput';
+import ImageInput from '@/components/form/ImageInput';
 
 function CreatePropertyPage() {
   return (
@@ -41,14 +43,19 @@ function CreatePropertyPage() {
             rows={6}
             required
           />
+          <ImageInput name='image' label='封面圖片' />
           <div className='grid lg:grid-cols-1'>
             <AddressInputContainer />
           </div>
-          <div className='flex flex-col gap-4 mb-4'>
+          <div className='flex flex-col gap-4 mb-6'>
             <span>房間資訊</span>
             {accomodationDetails.map((detail) => (
               <CounterInput title={detail.label} valueKey={detail.key} key={detail.key} />
             ))}
+          </div>
+          <div className='flex flex-col gap-4 mb-8'>
+            <span>可用設施</span>
+            <AmenitiesInput />
           </div>
           <SubmitButton text='創建房源' />
         </FormContainer>
