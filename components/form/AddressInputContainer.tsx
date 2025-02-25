@@ -73,7 +73,7 @@ function AddressInputContainer() {
       <input type="hidden" name="latitude" value={location?.lat ?? ""} />
       <input type="hidden" name="longitude" value={location?.lng ?? ""} />
       
-      <TextInput className="w-full" name='address' label='地址' placeholder='請輸入房源地址進行驗證' maxLength={100} disabled={isLoading || !!location}/>
+      <TextInput className="w-full" name='address' label='地址' placeholder='請輸入房源地址進行驗證' maxLength={100} readOnly={isLoading || !!location} />
       <Button
         className="mt-6 bg-blue-500 text-white hover:bg-blue-700"
         disabled={isLoading || !!location}

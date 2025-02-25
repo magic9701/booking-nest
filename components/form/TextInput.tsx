@@ -12,10 +12,11 @@ type TextInputProps = {
   disabled?: boolean
   maxLength?: number
   className?: string
+  readOnly?: boolean
 }
 
 function TextInput(props: TextInputProps) {
-  const { name, label, defaultValue = '', placeholder, disabled, maxLength, className } = props
+  const { name, label, defaultValue = '', placeholder, disabled, maxLength, className, readOnly } = props
   const [value, setValue] = useState(defaultValue)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -37,6 +38,7 @@ function TextInput(props: TextInputProps) {
           disabled={disabled}
           required
           className="flex-grow"
+          readOnly={readOnly}
         />
         {maxLength && (
           <p className={`text-sm mt-1 text-right`} style={{ fontSize: '12px' }}>

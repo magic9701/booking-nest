@@ -63,21 +63,20 @@ export const propertySchema = z.object({
     }),
   category: z.string(),
   description: z.string().refine(
-    (description) => {
-      const wordCount = description.split(' ').length;
-      return wordCount >= 10 && wordCount <= 1000;
-    },
+    (description) => description.length >= 10 && description.length <= 1000,
     {
       message: '描述的字數必須介於 10 到 1000 之間',
     }
   ),
   address: z.string(),
-  latitude: z.number()
-    .min(-90, { message: '緯度必須在 -90 到 90 之間。' })
-    .max(90, { message: '緯度必須在 -90 到 90 之間。' }),
-  longitude: z.number()
-    .min(-180, { message: '經度必須在 -180 到 180 之間。' })
-    .max(180, { message: '經度必須在 -180 到 180 之間。' }),
+  latitude: z.preprocess((val) => {
+    if (typeof val === 'string' && val.trim() !== '') return Number(val)
+    return val
+  }, z.number().refine((num) => num !== 0, { message: '請先驗證地址' })),
+  longitude: z.preprocess((val) => {
+    if (typeof val === 'string' && val.trim() !== '') return Number(val)
+    return val
+  }, z.number().refine((num) => num !== 0, { message: '請先驗證地址' })),
   guests: z.coerce.number().int().min(0, {
     message: '可容納人數至少為 1 位',
   }),

@@ -16,7 +16,7 @@ const getAuthUser = async() => {
     throw new Error('請登入再執行')
   }
 
-  if(!user.privateMetadata.hasProfile) redirect('/:loacle/profile/create')
+  if(!user.privateMetadata.hasProfile) redirect('/profile/create')
   
   return user
 }
@@ -94,7 +94,7 @@ export const fetchProfile = async () => {
       clerkId: user.id
     },
   })
-  if (!profile) redirect('/:loacle/profile/create')
+  if (!profile) redirect('/profile/create')
   return profile
 }
 
@@ -127,7 +127,7 @@ export const updateProfileAction = async (
       data: validatedFields
     })
 
-    revalidatePath('/:loacle/profile')
+    revalidatePath('/profile')
     return { message: '修改個人資料成功' }
   } catch (error) {
     return renderError(error)
@@ -153,7 +153,7 @@ export const updateProfileImageAction = async (
         profileImage: fullPath,
       },
     });
-    revalidatePath('/:loacle/profile');
+    revalidatePath('/profile');
     return { message: '更新頭貼成功' };
   } catch (error) {
     return renderError(error);
@@ -164,12 +164,28 @@ export const updateProfileImageAction = async (
 export const createPropertyAction = async (
   prevState: any,
   formData: FormData
-): Promise<{ message: string }> => {
+) => {
   const user = await getAuthUser()
   try {
     const rawData = Object.fromEntries(formData)
-    const file = formData.get('image') as File;
-    const validatedFields = validateWithZodSchema(propertySchema, rawData)
+    const file = formData.get('image') as File
+
+    const validatedFields = validateWithZodSchema(propertySchema, rawData) as {
+      name: string
+      tagline: string
+      price: number
+      category: string
+      description: string
+      address: string
+      latitude: number
+      longitude: number
+      guests: number
+      bedrooms: number
+      beds: number
+      baths: number
+      amenities: string
+    }
+
     const validatedFile = validateWithZodSchema(imageSchema, { image: file })
     const fullPath = await uploadImage(validatedFile.image)
 
@@ -180,9 +196,8 @@ export const createPropertyAction = async (
         profileId: user.id,
       },
     })
-
-    return { message: '已新增房源' };
   } catch (error) {
     return renderError(error)
   }
+  redirect('/');
 }
