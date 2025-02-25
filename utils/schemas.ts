@@ -72,16 +72,12 @@ export const propertySchema = z.object({
     }
   ),
   address: z.string(),
-  mapPosition: z.object({
-    lat: z
-      .number()
-      .min(-90, { message: '緯度必須在 -90 到 90 之間。' })
-      .max(90, { message: '緯度必須在 -90 到 90 之間。' }),
-    lng: z
-      .number()
-      .min(-180, { message: '經度必須在 -180 到 180 之間。' })
-      .max(180, { message: '經度必須在 -180 到 180 之間。' }),
-  }),
+  latitude: z.number()
+    .min(-90, { message: '緯度必須在 -90 到 90 之間。' })
+    .max(90, { message: '緯度必須在 -90 到 90 之間。' }),
+  longitude: z.number()
+    .min(-180, { message: '經度必須在 -180 到 180 之間。' })
+    .max(180, { message: '經度必須在 -180 到 180 之間。' }),
   guests: z.coerce.number().int().min(0, {
     message: '可容納人數至少為 1 位',
   }),
