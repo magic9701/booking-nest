@@ -7,8 +7,10 @@ import { useState, useEffect } from "react"
 function AddressInputContainer() {
   const { toast } = useToast()
   const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null)
+  const [formattedAddress, setFormattedAddress] = useState("")
   const [error, setError] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+  
 
 
   const handleGeocode = async (address:string) => {
@@ -23,15 +25,18 @@ function AddressInputContainer() {
         body: JSON.stringify({ address }),
       })
 
-      const data = await response.json()
+
+      const data = await response.json();
       if (response.ok) {
         setLocation({ lat: data.lat, lng: data.lng })
+        setFormattedAddress(data.formattedAddress)
+
         toast({
           title: "驗證成功",
-          description: "地址已成功解析！",
+          description: `地址已成功解析！\n${data.formattedAddress}`,
         })
       } else {
-        setError(data.error || "無法獲取座標")
+        setError(data.error || "無法獲取座標");
       }
     } catch (err) {
       console.log(err)
@@ -73,7 +78,7 @@ function AddressInputContainer() {
       <input type="hidden" name="latitude" value={location?.lat ?? ""} />
       <input type="hidden" name="longitude" value={location?.lng ?? ""} />
       
-      <TextInput className="w-full" name='address' label='地址' placeholder='請輸入房源地址進行驗證' maxLength={100} readOnly={isLoading || !!location} />
+      <TextInput className="w-full" name='address' label='地址' placeholder='請輸入房源地址進行驗證' defaultValue={formattedAddress} maxLength={100} readOnly={isLoading || !!location} key={formattedAddress}/>
       <Button
         className="mt-6 bg-blue-500 text-white hover:bg-blue-700"
         disabled={isLoading || !!location}
