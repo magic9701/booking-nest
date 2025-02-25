@@ -179,6 +179,8 @@ export const createPropertyAction = async (
       address: string
       latitude: number
       longitude: number
+      city: string
+      county: string
       guests: number
       bedrooms: number
       beds: number
@@ -197,6 +199,7 @@ export const createPropertyAction = async (
       },
     })
   } catch (error) {
+    console.log(error)
     return renderError(error)
   }
   redirect('/');

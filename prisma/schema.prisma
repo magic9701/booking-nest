@@ -30,6 +30,8 @@ model Property {
   address     String
   latitude    Float
   longitude   Float
+  city        String
+  county     String
   description String
   price       Int
   guests      Int

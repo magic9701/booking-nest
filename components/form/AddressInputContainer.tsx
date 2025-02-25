@@ -8,6 +8,8 @@ function AddressInputContainer() {
   const { toast } = useToast()
   const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null)
   const [formattedAddress, setFormattedAddress] = useState("")
+  const [city, setCity] = useState("")
+  const [county, setCounty] = useState("")
   const [error, setError] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   
@@ -16,6 +18,8 @@ function AddressInputContainer() {
   const handleGeocode = async (address:string) => {
     setError("")
     setLocation(null)
+    setCity("")
+    setCounty("")
     setIsLoading(true)
 
     try {
@@ -30,6 +34,8 @@ function AddressInputContainer() {
       if (response.ok) {
         setLocation({ lat: data.lat, lng: data.lng })
         setFormattedAddress(data.formattedAddress)
+        setCity(data.city)
+        setCounty(data.county)
 
         toast({
           title: "驗證成功",
@@ -77,6 +83,8 @@ function AddressInputContainer() {
     <div className='flex gap-4 w-full'>
       <input type="hidden" name="latitude" value={location?.lat ?? ""} />
       <input type="hidden" name="longitude" value={location?.lng ?? ""} />
+      <input type="hidden" name="city" value={city ?? ""} />
+      <input type="hidden" name="county" value={county ?? ""} />
       
       <TextInput className="w-full" name='address' label='地址' placeholder='請輸入房源地址進行驗證' defaultValue={formattedAddress} maxLength={100} readOnly={isLoading || !!location} key={formattedAddress}/>
       <Button

@@ -68,7 +68,7 @@ export const propertySchema = z.object({
       message: '描述的字數必須介於 10 到 1000 之間',
     }
   ),
-  address: z.string(),
+  address: z.string().min(1, { message: "地址為必填" }),
   latitude: z.preprocess((val) => {
     if (typeof val === 'string' && val.trim() !== '') return Number(val)
     return val
@@ -77,6 +77,8 @@ export const propertySchema = z.object({
     if (typeof val === 'string' && val.trim() !== '') return Number(val)
     return val
   }, z.number().refine((num) => num !== 0, { message: '請先驗證地址' })),
+  city: z.string().min(1, { message: "城市為必填" }),
+  county: z.string().min(1, { message: "縣市為必填" }),
   guests: z.coerce.number().int().min(0, {
     message: '可容納人數至少為 1 位',
   }),
