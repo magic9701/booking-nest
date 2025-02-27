@@ -36,7 +36,7 @@ function AmenitiesInput() {
               />
               <label
                 htmlFor={amenity.key}
-                className='text-sm font-medium leading-none capitalize flex gap-x-2 items-center'
+                className='text-sm font-medium leading-none  flex gap-x-2 items-center'
               >
                 {amenity.label}
               </label>

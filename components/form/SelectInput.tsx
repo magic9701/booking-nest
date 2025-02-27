@@ -29,7 +29,7 @@ function SelectInput(props: SelectInputProps) {
   return (
     <div className="mb-2">
       {props.label && (
-        <Label htmlFor={props.name} className="capitalize">
+        <Label htmlFor={props.name} className="">
           {props.label}
         </Label>
       )}

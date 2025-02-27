@@ -25,7 +25,7 @@ function CounterInput(props: CounterProps) {
       {/* hidden input */}
       <input type='hidden' name={valueKey} value={count} />
       <div className="flex flex-col">
-        <h3 className="font-medium capitalize">{title}</h3>
+        <h3 className="font-medium ">{title}</h3>
         <span className="text-gray-400 text-sm">請輸入{title}數</span>
       </div>
       <div className="flex items-center gap-4">

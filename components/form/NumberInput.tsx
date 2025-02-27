@@ -16,7 +16,7 @@ function NumberInput(props : FormInputNumberProps) {
   const { defaultValue, label, name, placeholder, min, max, required, className } = props
   return (
     <div className={`mb-2 ${className}`}>
-      <Label htmlFor={name} className="capitalize">
+      <Label htmlFor={name} className="">
         {label}
       </Label>
       <Input

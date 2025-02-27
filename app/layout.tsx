@@ -34,7 +34,7 @@ export default async function RootLayout({
             className={`${geistSans.variable} ${geistMono.variable} antialiased`}
           >
             <Navbar />
-            <main className="container py-10">
+            <main className="container">
               {children}
             </main>
             <Toaster />
