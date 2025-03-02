@@ -8,4 +8,6 @@ export type PropertyCardProps = {
   tagline: string
   county: string
   price: number
+  city: string
+  category: string
 }

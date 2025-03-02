@@ -73,3 +73,8 @@ export const categories: Category[] = [
     icon: GiWoodCabin,
   },
 ];
+
+// 取得類別中文
+export function getCategoryLabel(key: string): string {
+  return categories.find((c) => c.key === key)?.label || '未知類別';
+}
