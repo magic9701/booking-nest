@@ -1,8 +1,8 @@
 import LikedButton from "@/components/card/LikedButton"
 import EmptyContent from "@/components/common/EmptyContent"
+import AddressWithMap from "@/components/properties/AddressWithMap"
 import BreadCrumbs from "@/components/properties/BreadCrumbs"
 import CoverImage from "@/components/properties/CoverImage"
-import ShareButton from "@/components/properties/ShareButton"
 import { fetchPropertyDetail } from "@/utils/action"
 
 
@@ -31,6 +31,7 @@ async function PropertyDetailPage({params}: {params: {id: string}}) {
           <LikedButton propertyId={property.id}/>
         </div>
       </header>
+      <AddressWithMap address={property.address} name={property.name}></AddressWithMap>
       <CoverImage name={property.name} src={property.image} />
     </section>
   )

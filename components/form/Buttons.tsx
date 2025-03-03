@@ -66,9 +66,9 @@ export const CardSubmitButton = ({ isFavorite }: { isFavorite: boolean }) => {
       {pending ? (
         <ReloadIcon className='animate-spin' />
       ) : isFavorite ? (
-        <FaHeart />
+        <FaHeart color="#ff3838"/>
       ) : (
-        <FaRegHeart />
+        <FaRegHeart color="#ff3838"/>
       )}
     </Button>
   )
