@@ -2,7 +2,7 @@ import { Skeleton } from '../ui/skeleton';
 
 function PropertyCardSkeleton() {
   return (
-    <div className="flex flex-col w-full max-w-80 border border-gray-300 rounded-md">
+    <div className="flex flex-col w-full max-w-80 border border-gray-100 rounded-md">
       <div className="relative h-[220px] overflow-hidden rounded-md">
         <Skeleton className="w-full h-full object-cover" />
       </div>

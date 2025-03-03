@@ -1,4 +1,4 @@
-import PropertyCardSkeleton from '@/components/card/PropertyCardSkeleton'
+import PropertyCardSkeletonList from '@/components/card/PropertyCardSkeletonList';
 import CategoriesList from '@/components/home/CategoriesList'
 import PropertiesContainer from '@/components/home/PropertiesContainer'
 import Image from 'next/image';
@@ -25,7 +25,7 @@ function HomePage({
         search={searchParams.search}
       />
       {/* 住宿卡片 */}
-      <Suspense fallback={<PropertyCardSkeleton />}>
+      <Suspense fallback={<PropertyCardSkeletonList />}>
         <PropertiesContainer
           category={searchParams.category}
           search={searchParams.search}
