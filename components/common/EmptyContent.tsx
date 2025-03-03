@@ -10,6 +10,7 @@ function EmptyContent({
   btnText,
   btnAction,
   routerPush,
+  imgSize = 'small',
 }: {
   imageSrc?: string
   heading?: string
@@ -17,6 +18,7 @@ function EmptyContent({
   btnText?: string
   btnAction?: (event: React.MouseEvent<HTMLButtonElement>) => void
   routerPush?: string
+  imgSize?: 'small' | 'medium' | 'large'
 }) {
   const router = useRouter()
 
@@ -28,9 +30,24 @@ function EmptyContent({
     }
   }
 
+  // 圖片大小
+  const imageSizes = {
+    small: 128,
+    medium: 256,
+    large: 384,
+  }
+
   return (
     <div className="flex flex-col items-center justify-center mt-4 text-center">
-      {imageSrc && <Image src={imageSrc} alt="Empty state" width={128} height={128} className="mb-2" />}
+      {imageSrc && (
+        <Image
+          src={imageSrc}
+          alt="Empty state"
+          width={imageSizes[imgSize]}
+          height={imageSizes[imgSize]}
+          className="mb-2 rounded"
+        />
+      )}
       {heading && <h2 className="text-xl font-bold mt-2">{heading}</h2>}
       {message && <p className="text-lg mt-2">{message}</p>}
       {btnText && (

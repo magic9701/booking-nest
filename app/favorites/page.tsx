@@ -13,6 +13,7 @@ async function FavoritesPage() {
         btnText='前往首頁尋找住宿'
         routerPush='/'
         imageSrc='/images/no-Search-result.png'
+        imgSize='medium'
       />
     );
   }
