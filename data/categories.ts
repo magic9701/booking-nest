@@ -1,12 +1,11 @@
-import { IconType } from 'react-icons';
-import { MdCabin } from 'react-icons/md';
-
-import { TbCaravan, TbTent, TbBuildingCottage } from 'react-icons/tb';
-
-import { GiWoodCabin } from 'react-icons/gi';
-import { PiWarehouse, PiLighthouse, PiVan } from 'react-icons/pi';
-
-import { GoContainer } from 'react-icons/go';
+import { IconType } from 'react-icons'
+import { MdCabin, MdMeetingRoom } from 'react-icons/md'
+import { FaHotel } from 'react-icons/fa'
+import { TbTent } from 'react-icons/tb'
+import { GiWoodCabin, GiBrickWall } from 'react-icons/gi'
+import { PiWarehouse, PiVan } from 'react-icons/pi'
+import { GoContainer } from 'react-icons/go'
+import { MdOutlineBed } from 'react-icons/md'
 
 type Category = {
   key: CategoryKey
@@ -18,19 +17,29 @@ export type CategoryKey =
   | 'cabin'
   | 'tent'
   | 'airstream'
-  | 'cottage'
   | 'container'
-  | 'caravan'
   | 'tiny'
   | 'warehouse'
   | 'lodge'
-
+  | 'bnb'
+  | 'traditional'
+  | 'shared'
 
 export const categories: Category[] = [
+  {
+    key: 'bnb',
+    label: '民宿',
+    icon: FaHotel,
+  },
   {
     key: 'cabin',
     label: '小木屋',
     icon: MdCabin,
+  },
+  {
+    key: 'tent',
+    label: '豪華露營',
+    icon: TbTent,
   },
   {
     key: 'airstream',
@@ -38,41 +47,37 @@ export const categories: Category[] = [
     icon: PiVan,
   },
   {
-    key: 'tent',
-    label: '帳篷',
-    icon: TbTent,
-  },
-  {
-    key: 'warehouse',
-    label: '倉庫',
-    icon: PiWarehouse,
-  },
-  {
-    key: 'cottage',
-    label: '鄉村小屋',
-    icon: TbBuildingCottage,
-  },
-  {
     key: 'container',
     label: '貨櫃屋',
     icon: GoContainer,
   },
   {
-    key: 'caravan',
-    label: '旅行拖車',
-    icon: TbCaravan,
+    key: 'warehouse',
+    label: '倉庫造屋',
+    icon: PiWarehouse,
   },
   {
     key: 'tiny',
-    label: '燈塔小屋',
-    icon: PiLighthouse,
+    label: '膠囊旅館',
+    icon: MdOutlineBed,
   },
   {
     key: 'lodge',
     label: '山林小屋',
     icon: GiWoodCabin,
   },
+  {
+    key: 'traditional',
+    label: '合院古厝',
+    icon: GiBrickWall,
+  },
+  {
+    key: 'shared',
+    label: '共住房源',
+    icon: MdMeetingRoom,
+  },
 ];
+
 
 // 取得類別中文
 export function getCategoryLabel(key: string): string {
