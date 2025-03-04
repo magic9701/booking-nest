@@ -206,20 +206,24 @@ export const createPropertyAction = async (
 }
 
 export const fetchProperties = async({
-  search='', category
+  search = '', 
+  category = '',
 }: {
-  search: string, category: string
+  search: string;
+  category: string;
 }) => {
+  const whereConditions: any = {
+    ...(category && { category }),
+    OR: [
+      { name: { contains: search, mode: 'insensitive' } },
+      { tagline: { contains: search, mode: 'insensitive' } },
+      { county: { contains: search, mode: 'insensitive' } },
+      { city: { contains: search, mode: 'insensitive' } },
+    ]
+  };
+
   const properties = await db.property.findMany({
-    where: {
-      category,
-      OR:[
-        { name: { contains: search, mode: 'insensitive' } },
-        { tagline: { contains: search, mode: 'insensitive' } },
-        { county: { contains: search, mode: 'insensitive' } },
-        { city: { contains: search, mode: 'insensitive' } }
-      ]
-    },
+    where: whereConditions,
     select: {
       id: true,
       image: true,
@@ -228,14 +232,16 @@ export const fetchProperties = async({
       county: true,
       city: true,
       price: true,
-      category: true
+      category: true,
     },
     orderBy: {
-      createdAt: 'desc'
+      createdAt: 'desc',
     },
   })
+
   return properties
 }
+
 
 export const fetchFavoriteId = async ({
   propertyId,

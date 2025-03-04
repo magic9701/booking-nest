@@ -8,11 +8,11 @@ async function PropertiesContainer({
   search = '',
 }: {
   category?: string;
-  search?: string;
+  search?: string
 }) {
   const properties: PropertyCardProps[] = await fetchProperties({
-    category,
-    search,
+    category: category,
+    search: search, 
   });
   if (properties.length === 0) {
     return (
