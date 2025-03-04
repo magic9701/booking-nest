@@ -4,6 +4,11 @@ import AddressWithMap from "@/components/properties/AddressWithMap"
 import BreadCrumbs from "@/components/properties/BreadCrumbs"
 import CoverImage from "@/components/properties/CoverImage"
 import { fetchPropertyDetail } from "@/utils/action"
+import { Star } from 'lucide-react'
+import { Separator } from "@/components/ui/separator"
+import AmenitiesList from "@/components/properties/AmenitiesList"
+import OwnerDetail from "@/components/properties/OwnerDetail"
+import BookingCalendar from "@/components/properties/BookingCalendar"
 
 
 async function PropertyDetailPage({params}: {params: {id: string}}) {
@@ -19,9 +24,6 @@ async function PropertyDetailPage({params}: {params: {id: string}}) {
         imgSize='medium'
       />
   )
-
-  const { baths, bedrooms, beds, guests } = property
-  const details = { baths, bedrooms, beds, guests }
   return (
     <section className="mt-2">
       <BreadCrumbs name={property.name}/>
@@ -33,6 +35,34 @@ async function PropertyDetailPage({params}: {params: {id: string}}) {
       </header>
       <AddressWithMap address={property.address} name={property.name}></AddressWithMap>
       <CoverImage name={property.name} src={property.image} />
+      {/* 詳細資訊 */}
+      <section className="grid grid-cols-12 gap-6">
+        <div className="col-span-9">
+          <div className="p-4">
+            <h2 className="text-2xl font-semibold mb-2">住宿資訊</h2>
+            <span>{property.guests}人 - {property.bedrooms}間臥室 - {property.beds}張床 - {property.baths}間衛浴</span>
+            <div className="flex mt-2">
+              <Star color="ffa200" fill="#ffa200"/>
+              <span className="ml-2 text-m font-semibold">4.9 / 5<span className="text-primary ml-1">(41則評價)</span></span>
+            </div>
+            <Separator className="my-8"/>
+            <OwnerDetail {...property.profile}/>
+            <Separator className="my-8"/>
+            <article className="whitespace-pre-line">
+              {property.description}
+            </article>
+            <Separator className="my-8"/>
+            <AmenitiesList amenities={property.amenities} />
+          </div>
+        </div>
+
+        <div className="col-span-3 sticky top-8">
+          <div className="p-4 bg-white shadow-lg rounded-lg">
+            <h2 className="text-xl font-semibold text-center">選擇日期</h2>
+            <BookingCalendar/>
+          </div>
+        </div>
+      </section>
     </section>
   )
 }
