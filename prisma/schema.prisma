@@ -73,6 +73,8 @@ model Review {
   comment     String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  booking     Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  bookingId   String   @unique // 確保每個訂單只有一條評論
 }
 
 model Booking {
@@ -86,6 +88,8 @@ model Booking {
   checkIn        DateTime
   checkOut       DateTime
   paymentStatus  Boolean @default(false)
+  isCancelled    Boolean @default(false)  //沒有取消才可以評論
+  review         Review?  @relation
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 }
