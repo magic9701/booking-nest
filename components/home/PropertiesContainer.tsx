@@ -4,8 +4,8 @@ import EmptyContent from '../common/EmptyContent';
 import type { PropertyCardProps } from '@/utils/types';
 
 async function PropertiesContainer({
-  category,
-  search,
+  category = '',
+  search = '',
 }: {
   category?: string;
   search?: string;
