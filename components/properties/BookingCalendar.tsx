@@ -1,6 +1,6 @@
 'use client';
 import { Calendar } from '@/components/ui/calendar'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { DateRange } from 'react-day-picker'
 // import { useProperty } from '@/utils/store'
 // import { useToast } from '@/components/ui/use-toast'

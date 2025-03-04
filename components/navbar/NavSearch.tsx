@@ -27,6 +27,7 @@ function NavSearch() {
     if(!searchParams.get('search')){
       setSearch('')
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   },[searchParams.get('search')])
 
   return (
@@ -35,6 +36,7 @@ function NavSearch() {
         type="text" 
         placeholder="搜尋喜歡的住宿"
         className="pr-10 dark:bg-muted"
+        value={search}
         onChange={(e) => {
           setSearch(e.target.value)
           handleSearch(e.target.value)
