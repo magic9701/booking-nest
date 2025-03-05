@@ -5,7 +5,7 @@ import db from './db';
 import { clerkClient, currentUser } from '@clerk/nextjs/server';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { renderError } from "./helper";
+import { calculateTotals, renderError } from "./helper";
 import { uploadImage } from "./supabase";
 
 // 使用clerk的hook取得user資料
@@ -320,7 +320,54 @@ export const fetchPropertyDetail = async (id: string) => {
       id,
     },
     include: {
-      profile:true
-    }
+      profile: true,
+      bookings: {
+        select: {
+          checkIn: true,
+          checkOut: true,
+        },
+      },
+    },
+  });
+};
+
+
+// 訂房相關
+export const createBookingAction = async (prevState: {
+  propertyId: string
+  checkIn: Date
+  checkOut: Date
+}) => {
+  const user = await getAuthUser()
+  const { propertyId, checkIn, checkOut } = prevState
+  const property = await db.property.findUnique({
+    where: { id: propertyId },
+    select: { price: true }
   })
+
+  if(!property) {
+    return { message: '無法找到房源' }
+  }
+
+  const { orderTotal, totalNights } = calculateTotals({
+    checkIn,
+    checkOut,
+    price: property.price
+  })
+
+  try {
+    await db.booking.create({
+      data: {
+        checkIn,
+        checkOut,
+        orderTotal,
+        totalNights,
+        profileId: user.id,
+        propertyId
+      }
+    })  
+  } catch (error) {
+    return renderError(error)
+  }
+  redirect('/bookings')
 }

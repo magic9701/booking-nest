@@ -3,12 +3,21 @@ import EmptyContent from "@/components/common/EmptyContent"
 import AddressWithMap from "@/components/properties/AddressWithMap"
 import BreadCrumbs from "@/components/properties/BreadCrumbs"
 import CoverImage from "@/components/properties/CoverImage"
-import { fetchPropertyDetail } from "@/utils/action"
-import { Star } from 'lucide-react'
 import { Separator } from "@/components/ui/separator"
 import AmenitiesList from "@/components/properties/AmenitiesList"
 import OwnerDetail from "@/components/properties/OwnerDetail"
-import BookingCalendar from "@/components/properties/BookingCalendar"
+import { Skeleton } from "@/components/ui/skeleton"
+//
+import { fetchPropertyDetail } from "@/utils/action"
+import { Star } from 'lucide-react'
+//
+import dynamic from "next/dynamic"
+
+
+const DynamicBookingWrapper = dynamic(() => import('@/components/booking/BookingWrapper'),{
+  ssr: false,
+  loading: () => <Skeleton className="h-[200px] w-full"/>
+})
 
 
 async function PropertyDetailPage({params}: {params: {id: string}}) {
@@ -59,7 +68,8 @@ async function PropertyDetailPage({params}: {params: {id: string}}) {
         <div className="col-span-3 sticky top-8">
           <div className="p-4 bg-white shadow-lg rounded-lg">
             <h2 className="text-xl font-semibold text-center">選擇日期</h2>
-            <BookingCalendar/>
+            {/* 選擇日期 */}
+            <DynamicBookingWrapper propertyId={property.id} price={property.price} bookings={property.bookings}/>
           </div>
         </div>
       </section>
