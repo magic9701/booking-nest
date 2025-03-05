@@ -322,6 +322,9 @@ export const fetchPropertyDetail = async (id: string) => {
     include: {
       profile: true,
       bookings: {
+        where: {
+          isCancelled: false, // 只包含未取消的訂房
+        },
         select: {
           checkIn: true,
           checkOut: true,
@@ -332,7 +335,7 @@ export const fetchPropertyDetail = async (id: string) => {
 };
 
 
-// 訂房相關
+// 訂房
 export const createBookingAction = async (prevState: {
   propertyId: string
   checkIn: Date
@@ -370,4 +373,55 @@ export const createBookingAction = async (prevState: {
     return renderError(error)
   }
   redirect('/bookings')
+}
+
+// 取得所有訂房
+export const fetchTrips = async() => {
+  const user = await getAuthUser()
+  const booking = await db.booking.findMany({
+    where: {
+      profileId: user.id,
+    },
+    include: {
+      property: {
+        select: {
+          id: true,
+          name: true,
+          county: true,
+          city: true,
+          image: true
+        }
+      }
+    },
+    orderBy: {
+      checkIn: 'asc'
+    }
+  })
+  return booking
+}
+
+// 取消訂房
+export const cancelTrips = async(prevState: {bookingId:string}) => {
+  const {bookingId} = prevState
+  const user = await getAuthUser()
+
+  try {
+    const booking = await db.booking.findUnique({
+      where: {
+        id: bookingId,
+        profileId: user.id,
+      },
+    })
+    if (booking) {
+      await db.booking.update({
+        where: { id: bookingId },
+        data: { isCancelled: true },
+      });
+      return { message: '取消訂房成功' }
+    } else {
+      return { message: '無法找到訂房紀錄' }
+    }
+  } catch (error) {
+    return renderError(error)
+  }
 }
