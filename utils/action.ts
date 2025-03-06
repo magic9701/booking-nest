@@ -5,7 +5,7 @@ import db from './db';
 import { clerkClient, currentUser } from '@clerk/nextjs/server';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { renderError } from "./helper";
+import { calculateTotals, renderError } from "./helper";
 import { uploadImage } from "./supabase";
 
 // 使用clerk的hook取得user資料
@@ -320,7 +320,108 @@ export const fetchPropertyDetail = async (id: string) => {
       id,
     },
     include: {
-      profile:true
+      profile: true,
+      bookings: {
+        where: {
+          isCancelled: false, // 只包含未取消的訂房
+        },
+        select: {
+          checkIn: true,
+          checkOut: true,
+        },
+      },
+    },
+  });
+};
+
+
+// 訂房
+export const createBookingAction = async (prevState: {
+  propertyId: string
+  checkIn: Date
+  checkOut: Date
+}) => {
+  const user = await getAuthUser()
+  const { propertyId, checkIn, checkOut } = prevState
+  const property = await db.property.findUnique({
+    where: { id: propertyId },
+    select: { price: true }
+  })
+
+  if(!property) {
+    return { message: '無法找到房源' }
+  }
+
+  const { orderTotal, totalNights } = calculateTotals({
+    checkIn,
+    checkOut,
+    price: property.price
+  })
+
+  try {
+    await db.booking.create({
+      data: {
+        checkIn,
+        checkOut,
+        orderTotal,
+        totalNights,
+        profileId: user.id,
+        propertyId
+      }
+    })  
+  } catch (error) {
+    return renderError(error)
+  }
+  redirect('/bookings')
+}
+
+// 取得所有訂房
+export const fetchTrips = async() => {
+  const user = await getAuthUser()
+  const booking = await db.booking.findMany({
+    where: {
+      profileId: user.id,
+    },
+    include: {
+      property: {
+        select: {
+          id: true,
+          name: true,
+          county: true,
+          city: true,
+          image: true
+        }
+      }
+    },
+    orderBy: {
+      checkIn: 'asc'
     }
   })
+  return booking
+}
+
+// 取消訂房
+export const cancelTrips = async(prevState: {bookingId:string}) => {
+  const {bookingId} = prevState
+  const user = await getAuthUser()
+
+  try {
+    const booking = await db.booking.findUnique({
+      where: {
+        id: bookingId,
+        profileId: user.id,
+      },
+    })
+    if (booking) {
+      await db.booking.update({
+        where: { id: bookingId },
+        data: { isCancelled: true },
+      });
+      return { message: '取消訂房成功' }
+    } else {
+      return { message: '無法找到訂房紀錄' }
+    }
+  } catch (error) {
+    return renderError(error)
+  }
 }

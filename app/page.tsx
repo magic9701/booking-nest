@@ -1,7 +1,7 @@
-import PropertyCardSkeletonList from '@/components/card/PropertyCardSkeletonList';
+import PropertyCardSkeletonList from '@/components/card/PropertyCardSkeletonList'
 import CategoriesList from '@/components/home/CategoriesList'
 import PropertiesContainer from '@/components/home/PropertiesContainer'
-import Image from 'next/image';
+import Image from 'next/image'
 import { Suspense } from 'react'
 
 function HomePage({
