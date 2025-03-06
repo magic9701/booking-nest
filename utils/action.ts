@@ -1,6 +1,6 @@
 'use server'
 
-import { imageSchema, profileSchema, propertySchema, validateWithZodSchema } from "./schemas";
+import { imageSchema, profileSchema, propertySchema, reviewSchema, validateWithZodSchema } from "./schemas";
 import db from './db';
 import { clerkClient, currentUser } from '@clerk/nextjs/server';
 import { revalidatePath } from 'next/cache';
@@ -372,10 +372,10 @@ export const createBookingAction = async (prevState: {
   } catch (error) {
     return renderError(error)
   }
-  redirect('/bookings')
+  redirect('/trips')
 }
 
-// 取得所有訂房
+// 取得user所有訂房紀錄
 export const fetchTrips = async() => {
   const user = await getAuthUser()
   const booking = await db.booking.findMany({
@@ -389,9 +389,10 @@ export const fetchTrips = async() => {
           name: true,
           county: true,
           city: true,
-          image: true
+          image: true,
         }
-      }
+      },
+      review: true,
     },
     orderBy: {
       checkIn: 'asc'
@@ -425,3 +426,110 @@ export const cancelTrips = async(prevState: {bookingId:string}) => {
     return renderError(error)
   }
 }
+
+// 撰寫評論
+export const createReview = async(
+  prevState: any,
+  formData: FormData
+) => {
+  const user = await getAuthUser()
+  const bookingId = formData.get('bookingId') as string
+  try {
+    // 找到訂單
+    const booking = await db.booking.findUnique({
+      where: {
+        id: bookingId,
+        profileId: user.id,
+      },
+      select: {
+        id: true,
+        propertyId: true
+      }
+    })
+
+    if (!booking) {
+      return { message: "無法找到對應的訂單" }
+    }
+
+    //找到訂單評論
+    const existingReview = await db.review.findUnique({
+      where: {
+        bookingId: bookingId,
+      },
+    })
+
+    if (existingReview) {
+      return { message: "此訂單已經有評論，無法重複評論" }
+    }
+    
+    const rawData = Object.fromEntries(formData)
+    const validatedFields = validateWithZodSchema(reviewSchema, rawData)
+
+    const comment = validatedFields.comment
+    const rating = validatedFields.rating
+
+    if (!comment || isNaN(rating)) {
+      return { message: "評論內容或評分不正確" };
+    }
+
+    //新增評論
+    await db.review.create({
+      data: {
+        bookingId,
+        profileId: user.id,
+        propertyId: booking.propertyId,
+        comment,
+        rating,
+      },
+    })
+  } catch (error) {
+    return renderError(error)
+  }
+  redirect('/trips?tab=completed')
+}
+
+// 編輯review
+export const updateReview = async (
+  prevState: { bookingId: string },
+  formData: FormData
+) => {
+  const { bookingId } = prevState
+  const user = await getAuthUser()
+
+  try {
+    // 找到review
+    const existingReview = await db.review.findUnique({
+      where: { bookingId },
+    })
+
+    if (!existingReview) {
+      return { message: "找不到該筆評論，請確認您的訂單" };
+    }
+
+    // 確保只能修改自己的評論
+    if (existingReview.profileId !== user.id) {
+      return { message: "您沒有權限修改這則評論" }
+    }
+
+    const newComment = formData.get("comment")?.toString()
+    const newRating = Number(formData.get("rating"))
+
+    if (!newComment || isNaN(newRating)) {
+      return { message: "請提供要修改的評論內容或評分" }
+    }
+
+    // 更新評論
+    await db.review.update({
+      where: { bookingId },
+      data: {
+        comment: newComment,
+        rating: newRating,
+      },
+    })
+    
+
+    return { message: "評論更新成功" }
+  } catch (error) {
+    return renderError(error);
+  }
+};

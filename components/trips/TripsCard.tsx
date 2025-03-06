@@ -8,6 +8,7 @@ import { cancelTrips } from "@/utils/action"
 import { useToast } from "@/hooks/use-toast"
 import { useRouter } from 'next/navigation'
 import Link from "next/link"
+import ReviewModal from "./ReviewModal"
 
 type TripsCardProps = {
   propertyId: string
@@ -21,6 +22,7 @@ type TripsCardProps = {
   totalPrice: number
   isCancelled: boolean
   isDone: boolean
+  review?: object | null
 }
 
 const status = (to: Date, isCancelled: boolean) => {
@@ -71,6 +73,12 @@ function TripsCard(props:TripsCardProps) {
           )}
           {(isCancelled && !isDone) && (
             <Button className="bg-red-500 text-white hover:bg-red-400" disabled>已經取消住宿</Button>
+          )}
+          {(!isCancelled && isDone && !props.review) && (
+            <ReviewModal bookingId={bookingId}/>
+          )}
+          {(!isCancelled && isDone && props.review) && (
+            <span>已完成評論</span>
           )}
       </div>
     </Card>
