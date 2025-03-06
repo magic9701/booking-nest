@@ -13,7 +13,7 @@ function CategoriesList({
 
   return (
     <section>
-      <ScrollArea className="py-6">
+      <ScrollArea className="py-2 3xl:py-6">
         <div className="flex gap-5 justify-center">
           {categories.map((item) => {
             const isActive = item.key === category
@@ -21,6 +21,7 @@ function CategoriesList({
               <Link
                 key={item.key}
                 href={`/?category=${item.key}${searchTerm}`}
+                prefetch={true}
               >
                 <article
                   className={`p-3 flex flex-col items-center cursor-pointer duration-300 hover:text-primary w-24 ${

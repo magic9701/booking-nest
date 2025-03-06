@@ -6,7 +6,7 @@ function Navbar() {
 
   return (
     <nav>
-      <div className="container flex flex-col sm:flex-row sm:justify-between sm:items-center flex-wrap gap-4 py-6">
+      <div className="container flex flex-col sm:flex-row sm:justify-between sm:items-center flex-wrap gap-4 py-4">
         <Logo />
         <NavSearch />
         <LinksDropdown />

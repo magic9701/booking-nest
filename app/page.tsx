@@ -12,12 +12,13 @@ function HomePage({
   return (
     <section>
       <Image
-        src="/images/cover-pic.png"
+        src="/images/Book-Now.gif"
         width={0}
         height={0}
         sizes="100vw"
-        className="w-full h-[150px] md:h-[150px] xl:h-[300px] object-cover"
+        className="w-full h-[120px] object-cover"
         alt="cover image"
+        unoptimized={true}
       />
       {/* 住宿類型列表 */}
       <CategoriesList
@@ -29,6 +30,7 @@ function HomePage({
         <PropertiesContainer
           category={searchParams.category}
           search={searchParams.search}
+          key={JSON.stringify(searchParams)}
         />
       </Suspense>
     </section>
