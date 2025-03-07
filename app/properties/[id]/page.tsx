@@ -22,6 +22,7 @@ const DynamicBookingWrapper = dynamic(() => import('@/components/booking/Booking
 
 async function PropertyDetailPage({params}: {params: {id: string}}) {
   const property = await fetchPropertyDetail(params.id)
+  
 
   if(!property) return (
     <EmptyContent
@@ -35,15 +36,15 @@ async function PropertyDetailPage({params}: {params: {id: string}}) {
   )
   return (
     <section className="mt-2">
-      <BreadCrumbs name={property.name}/>
+      <BreadCrumbs name={property.name!}/>
       <header className='flex justify-between item-center mt-5'>
         <h1 className="text-3xl font-bold">{property.tagline}</h1>
         <div className="flex item-center gap-x-4">
-          <LikedButton propertyId={property.id}/>
+          <LikedButton propertyId={property.id!}/>
         </div>
       </header>
-      <AddressWithMap address={property.address} name={property.name}></AddressWithMap>
-      <CoverImage name={property.name} src={property.image} />
+      <AddressWithMap address={property.address!} name={property.name!}></AddressWithMap>
+      <CoverImage name={property.name!} src={property.image!} />
       {/* 詳細資訊 */}
       <section className="grid grid-cols-12 gap-6">
         <div className="col-span-9">
@@ -52,16 +53,16 @@ async function PropertyDetailPage({params}: {params: {id: string}}) {
             <span>{property.guests}人 - {property.bedrooms}間臥室 - {property.beds}張床 - {property.baths}間衛浴</span>
             <div className="flex mt-2">
               <Star color="ffa200" fill="#ffa200"/>
-              <span className="ml-2 text-m font-semibold">4.9 / 5<span className="text-primary ml-1">(41則評價)</span></span>
+              <span className="ml-2 text-m font-semibold">{property.averageRating.toFixed(1)} / 5<span className="text-primary ml-1">({property.reviewCount}則評價)</span></span>
             </div>
             <Separator className="my-8"/>
-            <OwnerDetail {...property.profile}/>
+            <OwnerDetail {...property.profile!}/>
             <Separator className="my-8"/>
             <article className="whitespace-pre-line">
               {property.description}
             </article>
             <Separator className="my-8"/>
-            <AmenitiesList amenities={property.amenities} />
+            <AmenitiesList amenities={property.amenities!} />
           </div>
         </div>
 
@@ -69,7 +70,7 @@ async function PropertyDetailPage({params}: {params: {id: string}}) {
           <div className="p-4 bg-white shadow-lg rounded-lg">
             <h2 className="text-xl font-semibold text-center">選擇日期</h2>
             {/* 選擇日期 */}
-            <DynamicBookingWrapper propertyId={property.id} price={property.price} bookings={property.bookings}/>
+            <DynamicBookingWrapper propertyId={property.id!} price={property.price!} bookings={property.bookings!}/>
           </div>
         </div>
       </section>

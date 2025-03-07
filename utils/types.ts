@@ -10,6 +10,8 @@ export type PropertyCardProps = {
   price: number
   city: string
   category: string
+  reviewCount: number
+  averageRating: number
 }
 
 export type DateRangeSelect = {

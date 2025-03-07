@@ -9,7 +9,7 @@ interface OwnerDetailProps {
 }
 
 function OwnerDetail({ profileImage, username, createdAt }: OwnerDetailProps) {
-  // 計算加入 Airbnb 的時間
+  // 計算加入的時間
   const joinedDuration = formatDistanceToNow(new Date(createdAt), { addSuffix: true, locale: zhTW })
 
   return (
@@ -22,7 +22,7 @@ function OwnerDetail({ profileImage, username, createdAt }: OwnerDetailProps) {
       {/* 屋主資訊 */}
       <div>
         <h2 className="text-lg font-semibold">{username}</h2>
-        <p className="text-gray-500 text-sm">{joinedDuration} 加入 Airbnb</p>
+        <p className="text-gray-500 text-sm">{joinedDuration} 加入</p>
       </div>
     </div>
   );

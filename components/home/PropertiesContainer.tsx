@@ -13,7 +13,7 @@ async function PropertiesContainer({
   const properties: PropertyCardProps[] = await fetchProperties({
     category: category,
     search: search, 
-  });
+  })
   if (properties.length === 0) {
     return (
       <EmptyContent

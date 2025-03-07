@@ -239,7 +239,33 @@ export const fetchProperties = async({
     },
   })
 
-  return properties
+  const reviewStats = await Promise.all(
+    properties.map(async (property) => {
+      const stats = await db.review.aggregate({
+        where: { propertyId: property.id },
+        _count: { id: true },  // 計算 review 數量
+        _avg: { rating: true },  // 計算平均分數
+      });
+      return {
+        propertyId: property.id,
+        reviewCount: stats._count.id || 0,
+        averageRating: stats._avg.rating
+        ? Number(stats._avg.rating.toFixed(1)) // 保證保留 1 位小數，包含 `.0`
+        : 0
+      }
+    })
+  )
+
+  const propertiesWithReviews = properties.map((property) => {
+    const stats = reviewStats.find((s) => s.propertyId === property.id)
+    return {
+      ...property,
+      reviewCount: stats?.reviewCount || 0,
+      averageRating: stats?.averageRating || 0,
+    }
+  })
+
+  return propertiesWithReviews
 }
 
 
@@ -315,7 +341,7 @@ export const fetchFavoriteList = async () => {
 }
 
 export const fetchPropertyDetail = async (id: string) => {
-  return await db.property.findUnique({
+  const property = await db.property.findUnique({
     where: {
       id,
     },
@@ -331,8 +357,30 @@ export const fetchPropertyDetail = async (id: string) => {
         },
       },
     },
-  });
-};
+  })
+
+  const reviewStats = await db.review.aggregate({
+    where: {
+      propertyId: id,
+    },
+    _count: {
+      id: true,  // 計算評論數量
+    },
+    _avg: {
+      rating: true,  // 計算平均評分
+    },
+  })
+  const reviewCount = reviewStats._count.id || 0
+  const averageRating = reviewStats._avg.rating
+    ? Number(reviewStats._avg.rating.toFixed(1))
+    : 0
+
+  return {
+    ...property,
+    reviewCount,
+    averageRating
+  }
+}
 
 
 // 訂房
@@ -531,4 +579,51 @@ export const updateReview = async (
   } catch (error) {
     return renderError(error);
   }
-};
+}
+
+// 取得review數量及平均分數
+// export const fetchReviewStats = async (propertyId: string) => {
+//   const reviewStats = await db.review.aggregate({
+//     where: {
+//       propertyId: propertyId,
+//     },
+//     _count: {
+//       id: true,  // 計算評論數量
+//     },
+//     _avg: {
+//       rating: true,  // 計算平均評分
+//     },
+//   })
+
+//   return reviewStats;
+// }
+
+
+// 取得詳細review內容
+export const fetchPropertyReviews = async (propertyId: string) => {
+  const reviews = await db.review.findMany({
+    where: {
+      propertyId: propertyId,
+    },
+    select: {
+      id: true,
+      rating: true,
+      comment: true,
+      createdAt: true,
+      profile: {
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          profileImage: true,
+          username: true,
+        },
+      },
+    },
+    orderBy: {
+      createdAt: 'desc',
+    },
+  });
+
+  return reviews;
+}
