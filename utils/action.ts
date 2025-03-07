@@ -317,10 +317,11 @@ export const toggleFavoriteAction = async (prevState: {
 }
 
 export const fetchFavoriteList = async () => {
-  const user = await getAuthUser()
+  const user = await getAuthUser();
+
   const favoriteList = await db.favorite.findMany({
     where: {
-      profileId: user.id
+      profileId: user.id,
     },
     select: {
       property: {
@@ -332,13 +333,43 @@ export const fetchFavoriteList = async () => {
           county: true,
           city: true,
           price: true,
-          category: true
-        }
-      }
-    }
+          category: true,
+        },
+      },
+    },
   })
-  return favoriteList.map((item) => item.property)
+
+  const favoriteProperties = await Promise.all(
+    favoriteList.map(async (item) => {
+      const property = item.property;
+      const reviewStats = await db.review.aggregate({
+        where: {
+          propertyId: property.id,
+        },
+        _count: {
+          id: true,
+        },
+        _avg: {
+          rating: true,
+        },
+      });
+
+      const reviewCount = reviewStats._count.id || 0;
+      const averageRating = reviewStats._avg.rating
+        ? Number(reviewStats._avg.rating.toFixed(1))
+        : 0
+
+      return {
+        ...property,
+        reviewCount,
+        averageRating,
+      };
+    })
+  );
+
+  return favoriteProperties
 }
+
 
 export const fetchPropertyDetail = async (id: string) => {
   const property = await db.property.findUnique({
