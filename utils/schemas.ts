@@ -93,3 +93,15 @@ export const propertySchema = z.object({
   }),
   amenities: z.string(),
 })
+
+// review
+export const reviewSchema = z.object({
+  rating: z.coerce.number().int()
+  .min(1, {
+    message: '分數不得小於1'
+  })
+  .max(5, {
+    message: '分數不得大於5'
+  }),
+  comment: z.string().min(1, { message: "評論內容為必填" })
+})

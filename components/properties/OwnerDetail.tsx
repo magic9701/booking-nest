@@ -6,26 +6,34 @@ interface OwnerDetailProps {
   profileImage: string
   username: string
   createdAt: string | Date
+  size?: "small" | "large"
 }
 
-function OwnerDetail({ profileImage, username, createdAt }: OwnerDetailProps) {
-  // 計算加入 Airbnb 的時間
+function OwnerDetail({ profileImage, username, createdAt, size = "large" }: OwnerDetailProps) {
+  // 計算加入的時間
   const joinedDuration = formatDistanceToNow(new Date(createdAt), { addSuffix: true, locale: zhTW })
 
+  // 根據 size 設定樣式
+  const isSmall = size === "small"
+  const imageSize = isSmall ? 40 : 64
+  const textSize = isSmall ? "text-sm" : "text-lg"
+  const subTextSize = isSmall ? "text-xs" : "text-sm"
+  const gapSize = isSmall ? "gap-2" : "gap-4"
+
   return (
-    <div className="flex items-center gap-4 ">
+    <div className={`flex items-center ${gapSize}`}>
       {/* 屋主大頭貼 */}
-      <div className="w-16 h-16 rounded-full overflow-hidden border">
-        <Image src={profileImage} alt={username} width={64} height={64} className="object-cover" />
+      <div className={`rounded-full overflow-hidden border`} style={{ width: imageSize, height: imageSize }}>
+        <Image src={profileImage} alt={username} width={imageSize} height={imageSize} className="object-cover" />
       </div>
 
       {/* 屋主資訊 */}
       <div>
-        <h2 className="text-lg font-semibold">{username}</h2>
-        <p className="text-gray-500 text-sm">{joinedDuration} 加入 Airbnb</p>
+        <h2 className={`font-semibold ${textSize}`}>{username}</h2>
+        <p className={`text-gray-500 ${subTextSize}`}>{joinedDuration} 加入</p>
       </div>
     </div>
-  );
+  )
 }
 
-export default OwnerDetail;
+export default OwnerDetail

@@ -10,6 +10,8 @@ export type PropertyCardProps = {
   price: number
   city: string
   category: string
+  reviewCount: number
+  averageRating: number
 }
 
 export type DateRangeSelect = {
@@ -21,4 +23,17 @@ export type DateRangeSelect = {
 export type Booking = {
   checkIn: Date
   checkOut: Date
+}
+
+export type Review = {
+  profile: {
+    id: string
+    username: string
+    profileImage: string
+    createdAt: Date
+  };
+  id: string
+  createdAt: Date
+  rating: number
+  comment: string
 }

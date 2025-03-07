@@ -3,8 +3,6 @@ import { useProperty } from "@/utils/store"
 import { Card, CardTitle } from "../ui/card"
 import { Separator } from "../ui/separator"
 
-
-
 function BookingForm() {
   const { range, price } = useProperty((state) => state)
   const checkIn = range?.from as Date
@@ -13,7 +11,7 @@ function BookingForm() {
   const { totalNights, subTotal, service, tax, orderTotal, longStayDiscount } = calculateTotals({checkIn, checkOut, price})
 
   return (
-    <Card className="p-4">
+    <Card className="p-4 mb-4">
       <CardTitle className="mb-4">價格明細</CardTitle>
       <PriceRow label={`$${price} x ${totalNights} 晚`} amount={subTotal} />
       <PriceRow label='Booking Nest服務費' amount={service} />

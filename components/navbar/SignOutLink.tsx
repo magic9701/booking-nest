@@ -2,12 +2,16 @@
 
 import { SignOutButton } from '@clerk/nextjs';
 import { useToast } from '@/hooks/use-toast'
+import { useRouter } from 'next/navigation'
 
 function SignOutLink() {
   const { toast } = useToast()
+  const router = useRouter()
+
   const handleLogout = () => {
+    router.push('/')
     toast({ description: '登出成功' })
-  };
+  }
 
   return (
     <SignOutButton redirectUrl='/'>

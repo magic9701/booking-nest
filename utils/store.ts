@@ -17,3 +17,14 @@ export const useProperty = create<PropertyState>(() => {
     range: undefined,
   }
 })
+
+
+type ReviewState = {
+  isDialogOpen: boolean
+  toggleDialog: () => void
+}
+
+export const useReviewStore = create<ReviewState>((set) => ({
+  isDialogOpen: false,
+  toggleDialog: () => set((state) => ({ isDialogOpen: !state.isDialogOpen })),
+}))

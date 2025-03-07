@@ -6,8 +6,8 @@ import { getCategoryLabel } from "@/data/categories";
 import LikedButton from "./LikedButton"
 
 function PropertyCard({ property }: { property: PropertyCardProps }) {
-  const { name, image, price, category, city  } = property;
-  const { county, id: propertyId, tagline } = property;
+  const { name, image, price, category, city, reviewCount, averageRating  } = property
+  const { county, id: propertyId, tagline } = property
 
   return (
     <div className="flex relative flex-col w-full max-w-80 border border-gray-300 rounded-md">
@@ -18,7 +18,7 @@ function PropertyCard({ property }: { property: PropertyCardProps }) {
         <div className='flex flex-col px-2'>
           <span className='text-xl font-semibold mt-1 truncate w-full block'>{name}</span>
           <span className='text-xs my-1 truncate w-full block'>{tagline}</span>
-          <Rating />
+          <Rating reviewCount={reviewCount} averageRating={averageRating}/>
           <span className="text-sm text-gray-400">{getCategoryLabel(category)} | {city} {county}</span>
           <div className='flex items-center justify-end mt-6'>
             <span className="text-xl mr-2">TWD {price}</span>

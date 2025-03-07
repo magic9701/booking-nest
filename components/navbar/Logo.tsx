@@ -7,8 +7,8 @@ function Logo() {
       <Image 
         src="/icon/logo.svg" 
         alt="Booking Nest Logo" 
-        width={190} 
-        height={48} 
+        width={170} 
+        height={42} 
         priority
       />
     </Link>
