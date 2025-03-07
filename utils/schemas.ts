@@ -97,8 +97,8 @@ export const propertySchema = z.object({
 // review
 export const reviewSchema = z.object({
   rating: z.coerce.number().int()
-  .min(0, {
-    message: '分數不得小於0'
+  .min(1, {
+    message: '分數不得小於1'
   })
   .max(5, {
     message: '分數不得大於5'

@@ -581,24 +581,6 @@ export const updateReview = async (
   }
 }
 
-// 取得review數量及平均分數
-// export const fetchReviewStats = async (propertyId: string) => {
-//   const reviewStats = await db.review.aggregate({
-//     where: {
-//       propertyId: propertyId,
-//     },
-//     _count: {
-//       id: true,  // 計算評論數量
-//     },
-//     _avg: {
-//       rating: true,  // 計算平均評分
-//     },
-//   })
-
-//   return reviewStats;
-// }
-
-
 // 取得詳細review內容
 export const fetchPropertyReviews = async (propertyId: string) => {
   const reviews = await db.review.findMany({
@@ -613,10 +595,9 @@ export const fetchPropertyReviews = async (propertyId: string) => {
       profile: {
         select: {
           id: true,
-          firstName: true,
-          lastName: true,
           profileImage: true,
           username: true,
+          createdAt: true
         },
       },
     },
@@ -625,5 +606,5 @@ export const fetchPropertyReviews = async (propertyId: string) => {
     },
   });
 
-  return reviews;
+  return reviews
 }

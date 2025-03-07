@@ -24,3 +24,16 @@ export type Booking = {
   checkIn: Date
   checkOut: Date
 }
+
+export type Review = {
+  profile: {
+    id: string
+    username: string
+    profileImage: string
+    createdAt: Date
+  };
+  id: string
+  createdAt: Date
+  rating: number
+  comment: string
+}

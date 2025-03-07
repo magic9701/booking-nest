@@ -12,13 +12,13 @@ import { fetchPropertyDetail } from "@/utils/action"
 import { Star } from 'lucide-react'
 //
 import dynamic from "next/dynamic"
+import ReviewList from "@/components/properties/ReviewList"
 
 
 const DynamicBookingWrapper = dynamic(() => import('@/components/booking/BookingWrapper'),{
   ssr: false,
   loading: () => <Skeleton className="h-[200px] w-full"/>
 })
-
 
 async function PropertyDetailPage({params}: {params: {id: string}}) {
   const property = await fetchPropertyDetail(params.id)
@@ -35,7 +35,7 @@ async function PropertyDetailPage({params}: {params: {id: string}}) {
       />
   )
   return (
-    <section className="mt-2">
+    <section className="mt-2 relative">
       <BreadCrumbs name={property.name!}/>
       <header className='flex justify-between item-center mt-5'>
         <h1 className="text-3xl font-bold">{property.tagline}</h1>
@@ -63,12 +63,14 @@ async function PropertyDetailPage({params}: {params: {id: string}}) {
             </article>
             <Separator className="my-8"/>
             <AmenitiesList amenities={property.amenities!} />
+            <Separator className="my-8"/>
+            <ReviewList propertyId={property.id!}/>
           </div>
         </div>
 
-        <div className="col-span-3 sticky top-8">
+        <div className="col-span-3 sticky top-0">
           <div className="p-4 bg-white shadow-lg rounded-lg">
-            <h2 className="text-xl font-semibold text-center">選擇日期</h2>
+            <h2 className="text-xl font-semibold text-center">立即訂房</h2>
             {/* 選擇日期 */}
             <DynamicBookingWrapper propertyId={property.id!} price={property.price!} bookings={property.bookings!}/>
           </div>
