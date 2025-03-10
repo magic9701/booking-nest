@@ -213,7 +213,7 @@ export const createPropertyAction = async (
     console.log(error)
     return renderError(error)
   }
-  redirect('/');
+  redirect('/')
 }
 
 // 修改房源
@@ -221,8 +221,8 @@ export const updatePropertyAction = async (
   prevState: any,
   formData: FormData
 ): Promise<{ message: string }> => {
-  const user = await getAuthUser();
-  const propertyId = formData.get('id') as string;
+  const user = await checkUserLogin()
+  const propertyId = formData.get('id') as string
 
   try {
     const rawData = Object.fromEntries(formData)
@@ -240,8 +240,49 @@ export const updatePropertyAction = async (
     revalidatePath(`/rentals/${propertyId}/edit`)
     return { message: '修改成功' }
   } catch (error) {
-    return renderError(error);
+    return renderError(error)
   }
+}
+
+// 修改房源圖片
+export const updatePropertyImageAction = async (
+  prevState: any,
+  formData: FormData
+): Promise<{ message: string }> => {
+  const user = await checkUserLogin()
+  const propertyId = formData.get('id') as string
+
+  try {
+    const image = formData.get('image') as File;
+    const validatedFields = validateWithZodSchema(imageSchema, { image })
+    const fullPath = await uploadImage(validatedFields.image)
+
+    await db.property.update({
+      where: {
+        id: propertyId,
+        profileId: user.id,
+      },
+      data: {
+        image: fullPath,
+      },
+    });
+    revalidatePath(`/rentals/${propertyId}/edit`)
+    return { message: '編輯圖片成功' }
+  } catch (error) {
+    return renderError(error)
+  }
+}
+
+// 取得單一房源
+export const fetchRentalDetails = async (propertyId: string) => {
+  const user = await checkUserLogin()
+
+  return db.property.findUnique({
+    where: {
+      id: propertyId,
+      profileId: user.id,
+    },
+  })
 }
 
 export const fetchProperties = async({
