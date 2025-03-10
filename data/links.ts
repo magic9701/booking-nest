@@ -11,7 +11,7 @@ export const links: NavLink[] = [
   { href: "/favorites", label: "收藏住宿", icon: Heart },
   { href: "/trips", label: "我的旅程", icon: Plane },
   { href: "/rentals/create", label: "建立房源", icon: PlusCircle },
-  { href: "/rentals", label: "我的房源", icon: Building },
-  { href: "/bookings", label: "訂單管理", icon: CalendarCheck },
+  { href: "/rentals/admin", label: "我的房源", icon: Building },
+  { href: "/rentals/dashboard", label: "訂單管理", icon: CalendarCheck },
   { href: "/profile", label: "個人資訊", icon: User },
 ];

@@ -1,5 +1,8 @@
-function RentalsPage() {
-  return <h1 className="text-3xl">RentalsPage</h1>
+
+function Rentalspage() {
+  return (
+    <div>Rentalspage</div>
+  )
 }
 
-export default RentalsPage
+export default Rentalspage

@@ -1,4 +1,5 @@
 import { calculateDaysBetween } from "./calendar"
+import { BookingData, MonthIncome } from "./types"
 
 // 錯誤提示
 export const renderError = (error: unknown): { message: string } => {
@@ -92,4 +93,58 @@ export const calculateTotals = ({checkIn, checkOut, price}: BookingDetails) => {
   orderTotal = subTotal - longStayDiscount + tax + service
 
   return { totalNights, subTotal, tax, service, orderTotal, longStayDiscount }
+}
+
+/**
+ * 生成過去 12 個月的資料，補齊缺少的月份，並設定 total 為 0。
+ * 
+ * @param {Array<{ month: string, total: number }>} data - 原始數據，包含月份與對應總數
+ * @returns {Array<{ month: string, total: number }>} 補齊並排序後的 12 個月數據
+ *   - `month` (string): 月份（格式為 YYYY-MM）
+ *   - `total` (number): 當月總數，若無資料則為 0
+ */
+export function fillMissingMonths(data:MonthIncome[]) {
+  const now = new Date();
+  now.setMonth(now.getMonth() - 11)
+  let startYear = now.getFullYear()
+  let startMonth = now.getMonth() + 1
+
+  const existingMonths = new Map(data.map(d => [d.month, d.total]))
+
+  // 建立完整 12 個月的範圍
+  const fullData = [];
+  for (let i = 0; i < 12; i++) {
+    const month = String(startMonth).padStart(2, "0")
+    const key = `${startYear}-${month}`
+    
+    // 如果原始資料有該月份，取出原值，否則補 0
+    fullData.push({ month: key, total: existingMonths.get(key) || 0 })
+
+    // 更新月份（跨年處理）
+    startMonth++;
+    if (startMonth > 12) {
+        startMonth = 1
+        startYear++
+    }
+  }
+
+  return fullData
+}
+
+/**
+ * 取得本月份新增的訂單
+ * 
+ * @param {Array<{ createdAt: Date }>} data - 原始訂單數據，每個訂單包含創建時間 `createdAt`
+ *   - `createdAt` (Date): 訂單的創建時間
+ * @returns {number} 本月新增訂單的數量
+ *   - 函數返回一個數字，表示在本月內新增的訂單數量。
+ */
+export function getOrdersThisMonth(data:BookingData[]) {
+  const now = new Date()
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
+  const ordersThisMonth = data.filter(order => {
+    const createdAt = new Date(order.createdAt)
+    return createdAt >= startOfMonth && createdAt <= now
+  })
+  return ordersThisMonth.length
 }
