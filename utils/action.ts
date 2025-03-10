@@ -190,8 +190,6 @@ export const createPropertyAction = async (
       category: string
       description: string
       address: string
-      latitude: number
-      longitude: number
       city: string
       county: string
       guests: number
@@ -216,6 +214,34 @@ export const createPropertyAction = async (
     return renderError(error)
   }
   redirect('/');
+}
+
+// 修改房源
+export const updatePropertyAction = async (
+  prevState: any,
+  formData: FormData
+): Promise<{ message: string }> => {
+  const user = await getAuthUser();
+  const propertyId = formData.get('id') as string;
+
+  try {
+    const rawData = Object.fromEntries(formData)
+    const validatedFields = validateWithZodSchema(propertySchema, rawData)
+    await db.property.update({
+      where: {
+        id: propertyId,
+        profileId: user.id,
+      },
+      data: {
+        ...validatedFields,
+      },
+    })
+
+    revalidatePath(`/rentals/${propertyId}/edit`)
+    return { message: '修改成功' }
+  } catch (error) {
+    return renderError(error);
+  }
 }
 
 export const fetchProperties = async({
@@ -653,27 +679,6 @@ export const fetchPropertyReviews = async (propertyId: string) => {
   return reviews
 }
 
-
-// 取得所有自己的房源
-export async function getMyProperties() {
-  try {
-    const user = await checkUserLogin()
-
-    const properties = await db.property.findMany({
-      where: {
-        profileId: user.id,
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-    })
-
-    return properties
-  } catch (error) {
-    return renderError(error)
-  }
-}
-
 // 取得所有未完成的bookings
 export async function getPendingBooking() {
   const user = await checkUserLogin()
@@ -796,4 +801,71 @@ export async function getTotalCompletedBookingsAmount() {
   });
 
   return result._sum.orderTotal || 0
+}
+
+// 取得所有房源
+export const fetchRentals = async () => {
+  const user = await checkUserLogin()
+  const rentals = await db.property.findMany({
+    where: {
+      profileId: user.id,
+    },
+    select: {
+      id: true,
+      name: true,
+      price: true,
+    },
+  });
+
+  const rentalsWithBookingSums = await Promise.all(
+    rentals.map(async (rental) => {
+      const totalNightsSum = await db.booking.aggregate({
+        where: {
+          propertyId: rental.id,
+          paymentStatus: true,
+        },
+        _sum: {
+          totalNights: true,
+        },
+      });
+
+      const orderTotalSum = await db.booking.aggregate({
+        where: {
+          propertyId: rental.id,
+          paymentStatus: true,
+        },
+        _sum: {
+          orderTotal: true,
+        },
+      });
+
+      return {
+        ...rental,
+        totalNightsSum: totalNightsSum._sum.totalNights,
+        orderTotalSum: orderTotalSum._sum.orderTotal,
+      }
+    })
+  )
+
+  return rentalsWithBookingSums
+}
+
+// 刪除訂單
+export async function deleteRentalAction(prevState: { propertyId: string }) {
+  const { propertyId } = prevState
+  const user = await checkUserLogin()
+
+  try {
+    await db.property.delete({
+      where: {
+        id: propertyId,
+        profileId: user.id,
+      },
+    });
+
+    revalidatePath('/rentals')
+    return { message: '刪除成功' }
+  } catch (error) {
+    return renderError(error);
+  }
 }

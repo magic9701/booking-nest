@@ -6,18 +6,14 @@ import { useState, useEffect } from "react"
 
 function AddressInputContainer() {
   const { toast } = useToast()
-  const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null)
   const [formattedAddress, setFormattedAddress] = useState("")
   const [city, setCity] = useState("")
   const [county, setCounty] = useState("")
   const [error, setError] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   
-
-
   const handleGeocode = async (address:string) => {
     setError("")
-    setLocation(null)
     setCity("")
     setCounty("")
     setIsLoading(true)
@@ -32,7 +28,6 @@ function AddressInputContainer() {
 
       const data = await response.json();
       if (response.ok) {
-        setLocation({ lat: data.lat, lng: data.lng })
         setFormattedAddress(data.formattedAddress)
         setCity(data.city)
         setCounty(data.county)
@@ -81,8 +76,6 @@ function AddressInputContainer() {
 
   return (
     <div className='flex gap-4 w-full'>
-      <input type="hidden" name="latitude" value={location?.lat ?? ""} />
-      <input type="hidden" name="longitude" value={location?.lng ?? ""} />
       <input type="hidden" name="city" value={city ?? ""} />
       <input type="hidden" name="county" value={county ?? ""} />
       
