@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from "react"
-import { fillMissingMonths, formatCurrency, getOrdersThisMonth, renderError } from "@/utils/helper"
+import { fillMissingMonths, formatCurrency, getOrdersThisMonth } from "@/utils/helper"
 import { BookingData, MonthIncome } from "@/utils/types"
 import DashBoardCard from "@/components/rental/DashBoardCard"
 import LatestBooking from "@/components/rental/LatestBooking"
@@ -10,6 +10,7 @@ import { getMonthlyCompletedBookings, getPendingBooking, getTotalCompletedBookin
 import { Bar, BarChart, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts"
 import { ChartConfig, ChartContainer } from "@/components/ui/chart"
 import { Skeleton } from "@/components/ui/skeleton"
+import { useToast } from "@/hooks/use-toast"
 
 const chartConfig = {
   income: {
@@ -42,13 +43,14 @@ function RentalDashboard() {
   const [ upcomingBooking, setUpcomingBooking ] = useState<BookingData[]>([])
   const [ currentMonthBooking, setCurrentMonthBooking ] = useState(0)
   const [ loading, setLoading ] = useState(true)
+  const { toast } = useToast()
 
   const getAYearIncome = async() => {
     try {
       const res = await getTotalCompletedBookingsAmount()
       setTotalIncome(res)
     } catch (error) {
-      renderError(`無法取得總收入: ${error}`)
+      toast({ description: `無法取得總收入: ${error}`})
     }
   }
 
@@ -57,7 +59,7 @@ function RentalDashboard() {
       const res = await getMonthlyCompletedBookings()
       setMonthlyIncome(fillMissingMonths(res))
     } catch (error) {
-      renderError(`無法取得月收入: ${error}`)
+      toast({ description: `無法取得月收入: ${error}`})
     }
   }
 
@@ -67,7 +69,7 @@ function RentalDashboard() {
       setUpcomingBooking(res)
       setCurrentMonthBooking(getOrdersThisMonth(res))
     } catch (error) {
-      renderError(`無法取得訂單: ${error}`)
+      toast({ description: `無法取得近期訂單: ${error}`})
     }
   }
 
@@ -83,6 +85,7 @@ function RentalDashboard() {
     }
 
     fetchData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   },[])
 
   return (
