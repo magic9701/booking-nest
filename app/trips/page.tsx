@@ -4,18 +4,18 @@ import { fetchTrips } from "@/utils/action"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 async function TripsPage({ searchParams }: { searchParams: { tab?: string } }) {
+
   const tab = searchParams.tab === "completed" ? "completed" : "upcoming"
   const tripData = await fetchTrips()
   const today = new Date()
   today.setHours(0, 0, 0, 0)
-  
 
   const upcomingTrips = tripData.filter(trip => new Date(trip.checkOut) >= today)
   const completedTrips = tripData.filter(trip => new Date(trip.checkOut) < today)
 
   return (
     <>
-      <Tabs defaultValue={tab} className="w-full">
+      <Tabs defaultValue={tab} className="w-full ">
         <TabsList className="grid w-full grid-cols-2 bg-gray-200 gap-1 h-11 rounded-lg">
           <TabsTrigger
             value="upcoming"
