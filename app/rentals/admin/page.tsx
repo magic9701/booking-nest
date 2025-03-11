@@ -1,7 +1,5 @@
 'use client'
 
-import { useToast } from "@/hooks/use-toast"
-import { fetchRentals } from "@/utils/action"
 import { useState, useEffect } from "react"
 import {
   Table,
@@ -11,11 +9,15 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import EmptyContent from "@/components/common/EmptyContent"
-import { formatCurrency } from "@/utils/helper"
-import Link from "next/link"
-import { Skeleton } from "@/components/ui/skeleton"
 import { Edit,Trash2 } from 'lucide-react'
+import EmptyContent from "@/components/common/EmptyContent"
+import TableSkeleton from "@/components/common/TableSkeleton"
+import { formatCurrency } from "@/utils/helper"
+import { useToast } from "@/hooks/use-toast"
+import { deleteRentalAction, fetchRentals } from "@/utils/action"
+import Link from "next/link"
+import ConfirmDialog from "@/components/common/ConfirmDialog"
+
 
 type ReantalAdminProps = {
   totalNightsSum: number | null
@@ -35,12 +37,20 @@ const EditIcon = ({ propertyId }: { propertyId: string }) => {
 
 const DeleteIcon = ({ onDelete, propertyId }: { onDelete: (propertyId: string) => Promise<void>, propertyId: string }) => {
   return (
-    <button 
-      onClick={() => onDelete(propertyId)} 
-      style={{ background: 'none', border: 'none', cursor: 'pointer' }}
-    >
-      <Trash2 size={16} color="red" />
-    </button>
+    <ConfirmDialog
+      trigger={
+        <button 
+          style={{ background: 'none', border: 'none', cursor: 'pointer' }}
+        >
+          <Trash2 size={16} color="red" />
+        </button>
+      }
+      title="確認刪除"
+      description="您確定要刪除此房源嗎？此操作無法撤銷。"
+      confirmText="刪除"
+      cancelText="取消"
+      onConfirm={() => onDelete(propertyId)}
+    />
   )
 }
 
@@ -62,7 +72,9 @@ function ReantalAdminPage() {
 
   const handleDelete = async(propertyId: string) =>{
     try {
-      console.log('delete', propertyId)
+      await deleteRentalAction(propertyId)
+      setMyRentalList(prevList => prevList.filter(rental => rental.id !== propertyId))
+      toast({description: `刪除成功`})
     } catch (error) {
       toast({description: `無法刪除房源: ${error}`})
     }
@@ -77,14 +89,7 @@ function ReantalAdminPage() {
     <div>
       <h1 className="text-3xl font-bold tracking-tight mt-4 mb-6">我的房源</h1>
       {loading ? (
-        <>
-          <Skeleton className="w-full h-8 mb-1" />
-          <Skeleton className="w-full h-8 mb-1" />
-          <Skeleton className="w-full h-8 mb-1" />
-          <Skeleton className="w-full h-8 mb-1" />
-          <Skeleton className="w-full h-8 mb-1" />
-          <Skeleton className="w-full h-8 mb-1" />
-        </>
+        <TableSkeleton />
       ) : myRentalList.length > 0 ? (
         <div>
           <Table>

@@ -779,7 +779,7 @@ export async function getMonthlyCompletedBookings() {
   const bookings = await db.booking.findMany({
     where: {
       propertyId: { in: properties.map(property => property.id) },
-      isCancelled: false, // 未被取消
+      isCancelled: false,
       checkOut: {
         gte: oneYearAgo, // 過濾近一年的資料
       },
@@ -891,9 +891,8 @@ export const fetchRentals = async () => {
   return rentalsWithBookingSums
 }
 
-// 刪除訂單
-export async function deleteRentalAction(prevState: { propertyId: string }) {
-  const { propertyId } = prevState
+// 刪除房源
+export async function deleteRentalAction(propertyId: string) {
   const user = await checkUserLogin()
 
   try {
@@ -902,11 +901,41 @@ export async function deleteRentalAction(prevState: { propertyId: string }) {
         id: propertyId,
         profileId: user.id,
       },
-    });
+    })
 
     revalidatePath('/rentals')
     return { message: '刪除成功' }
   } catch (error) {
     return renderError(error);
   }
+}
+
+// 取得訂單
+export const fetchReservations = async () => {
+  const user = await checkUserLogin()
+
+  const reservations = await db.booking.findMany({
+    where: {
+      property: {
+        profileId: user.id,
+      },
+    },
+
+    orderBy: {
+      createdAt: 'desc',
+    },
+
+    include: {
+      property: {
+        select: {
+          id: true,
+          name: true,
+          price: true,
+          county: true,
+          city: true,
+        },
+      },
+    },
+  })
+  return reservations
 }

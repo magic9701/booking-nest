@@ -79,10 +79,10 @@ function AddressInputContainer() {
       <input type="hidden" name="city" value={city ?? ""} />
       <input type="hidden" name="county" value={county ?? ""} />
       
-      <TextInput className="w-full" name='address' label='地址' placeholder='請輸入房源地址進行驗證' defaultValue={formattedAddress} maxLength={100} readOnly={isLoading || city !== ''}/>
+      <TextInput className="w-full" name='address' label='地址' placeholder='請輸入房源地址進行驗證' defaultValue={formattedAddress} maxLength={100} readOnly={isLoading || city !== ''} key={formattedAddress}/>
       <Button
         className="mt-6 bg-blue-500 text-white hover:bg-blue-700"
-        disabled={isLoading}
+        disabled={isLoading || city !== ''}
         onClick={getLocation}
       >
         {isLoading ? "驗證中..." : "驗證地址"}

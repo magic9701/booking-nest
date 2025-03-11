@@ -51,7 +51,7 @@ function LatestBooking({ bookings }: { bookings: BookingData[] }) {
         </div>
         <div className="flex justify-center mt-4 h-10">
           <button
-            onClick={() => router.push('/rentals')}
+            onClick={() => router.push('/rentals/reservation')}
             className="mt-2 text-blue-500 font-semibold"
           >
             顯示所有訂單
