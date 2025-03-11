@@ -37,3 +37,26 @@ export type Review = {
   rating: number
   comment: string
 }
+
+export type BookingData = {
+  id: string
+  profileId: string
+  propertyId: string
+  checkIn: Date
+  checkOut: Date
+  createdAt: Date
+  updatedAt: Date
+  totalNights: number 
+  orderTotal: number       
+  isCancelled: boolean    
+  paymentStatus: boolean
+  property: {
+    name: string
+  }
+}
+
+
+export type MonthIncome = {
+  month: string
+  total: number
+}

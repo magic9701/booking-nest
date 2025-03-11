@@ -7,6 +7,20 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { calculateTotals, renderError } from "./helper";
 import { uploadImage } from "./supabase";
+import { startOfMonth, subYears, format } from "date-fns"
+
+/**
+ * 檢查當前用戶是否登入，若未登入則拋出錯誤
+ * @returns {Promise<User>} 已登入的使用者物件
+ * @throws {Error} 使用者未登入
+ */
+async function checkUserLogin() {
+  const user = await getAuthUser()
+  if (!user) {
+    throw new Error("使用者未登入")
+  }
+  return user
+}
 
 // 使用clerk的hook取得user資料
 const getAuthUser = async() => {
@@ -17,7 +31,6 @@ const getAuthUser = async() => {
   }
 
   if(!user.privateMetadata.hasProfile) redirect('/profile/create')
-  
   return user
 }
 
@@ -103,7 +116,7 @@ export const updateProfileAction = async (
   prevState: any,
   formData: FormData
 ): Promise<{ message: string }> => {
-  const user = await getAuthUser()
+  const user = await checkUserLogin()
 
   try {
     const rawData = Object.fromEntries(formData)
@@ -139,7 +152,7 @@ export const updateProfileImageAction = async (
   prevState: any,
   formData: FormData
 ) => {
-  const user = await getAuthUser();
+  const user = await checkUserLogin();
   try {
     const image = formData.get('image') as File;
     const validatedFields = validateWithZodSchema(imageSchema, { image });
@@ -165,7 +178,7 @@ export const createPropertyAction = async (
   prevState: any,
   formData: FormData
 ) => {
-  const user = await getAuthUser()
+  const user = await checkUserLogin()
   try {
     const rawData = Object.fromEntries(formData)
     const file = formData.get('image') as File
@@ -177,8 +190,6 @@ export const createPropertyAction = async (
       category: string
       description: string
       address: string
-      latitude: number
-      longitude: number
       city: string
       county: string
       guests: number
@@ -202,7 +213,76 @@ export const createPropertyAction = async (
     console.log(error)
     return renderError(error)
   }
-  redirect('/');
+  redirect('/')
+}
+
+// 修改房源
+export const updatePropertyAction = async (
+  prevState: any,
+  formData: FormData
+): Promise<{ message: string }> => {
+  const user = await checkUserLogin()
+  const propertyId = formData.get('id') as string
+
+  try {
+    const rawData = Object.fromEntries(formData)
+    const validatedFields = validateWithZodSchema(propertySchema, rawData)
+    await db.property.update({
+      where: {
+        id: propertyId,
+        profileId: user.id,
+      },
+      data: {
+        ...validatedFields,
+      },
+    })
+
+    revalidatePath(`/rentals/${propertyId}/edit`)
+    return { message: '修改成功' }
+  } catch (error) {
+    return renderError(error)
+  }
+}
+
+// 修改房源圖片
+export const updatePropertyImageAction = async (
+  prevState: any,
+  formData: FormData
+): Promise<{ message: string }> => {
+  const user = await checkUserLogin()
+  const propertyId = formData.get('id') as string
+
+  try {
+    const image = formData.get('image') as File;
+    const validatedFields = validateWithZodSchema(imageSchema, { image })
+    const fullPath = await uploadImage(validatedFields.image)
+
+    await db.property.update({
+      where: {
+        id: propertyId,
+        profileId: user.id,
+      },
+      data: {
+        image: fullPath,
+      },
+    });
+    revalidatePath(`/rentals/${propertyId}/edit`)
+    return { message: '編輯圖片成功' }
+  } catch (error) {
+    return renderError(error)
+  }
+}
+
+// 取得單一房源
+export const fetchRentalDetails = async (propertyId: string) => {
+  const user = await checkUserLogin()
+
+  return db.property.findUnique({
+    where: {
+      id: propertyId,
+      profileId: user.id,
+    },
+  })
 }
 
 export const fetchProperties = async({
@@ -274,7 +354,7 @@ export const fetchFavoriteId = async ({
 }: {
   propertyId: string
 }) => {
-  const user = await getAuthUser()
+  const user = await checkUserLogin()
   const favorite = await db.favorite.findFirst({
     where: {
       propertyId,
@@ -292,7 +372,7 @@ export const toggleFavoriteAction = async (prevState: {
   favoriteId: string | null;
   pathname: string;
 }) => {
-  const user = await getAuthUser()
+  const user = await checkUserLogin()
   const { propertyId, favoriteId, pathname } = prevState
   try {
     if (favoriteId) {
@@ -317,7 +397,7 @@ export const toggleFavoriteAction = async (prevState: {
 }
 
 export const fetchFavoriteList = async () => {
-  const user = await getAuthUser();
+  const user = await checkUserLogin();
 
   const favoriteList = await db.favorite.findMany({
     where: {
@@ -420,7 +500,9 @@ export const createBookingAction = async (prevState: {
   checkIn: Date
   checkOut: Date
 }) => {
-  const user = await getAuthUser()
+  const user = await checkUserLogin()
+  let bookingId: null | string = null
+
   const { propertyId, checkIn, checkOut } = prevState
   const property = await db.property.findUnique({
     where: { id: propertyId },
@@ -438,7 +520,7 @@ export const createBookingAction = async (prevState: {
   })
 
   try {
-    await db.booking.create({
+    const booking = await db.booking.create({
       data: {
         checkIn,
         checkOut,
@@ -447,16 +529,17 @@ export const createBookingAction = async (prevState: {
         profileId: user.id,
         propertyId
       }
-    })  
+    })
+    bookingId = booking.id
   } catch (error) {
     return renderError(error)
   }
-  redirect('/trips')
+  redirect(`/checkout?bookingId=${bookingId}`)
 }
 
 // 取得user所有訂房紀錄
 export const fetchTrips = async() => {
-  const user = await getAuthUser()
+  const user = await checkUserLogin()
   const booking = await db.booking.findMany({
     where: {
       profileId: user.id,
@@ -483,7 +566,7 @@ export const fetchTrips = async() => {
 // 取消訂房
 export const cancelTrips = async(prevState: {bookingId:string}) => {
   const {bookingId} = prevState
-  const user = await getAuthUser()
+  const user = await checkUserLogin()
 
   try {
     const booking = await db.booking.findUnique({
@@ -511,7 +594,7 @@ export const createReview = async(
   prevState: any,
   formData: FormData
 ) => {
-  const user = await getAuthUser()
+  const user = await checkUserLogin()
   const bookingId = formData.get('bookingId') as string
   try {
     // 找到訂單
@@ -573,7 +656,7 @@ export const updateReview = async (
   formData: FormData
 ) => {
   const { bookingId } = prevState
-  const user = await getAuthUser()
+  const user = await checkUserLogin()
 
   try {
     // 找到review
@@ -638,4 +721,256 @@ export const fetchPropertyReviews = async (propertyId: string) => {
   });
 
   return reviews
+}
+
+// 取得所有未完成的bookings
+export async function getPendingBooking() {
+  const user = await checkUserLogin()
+
+  const today = new Date()
+
+  // 先取得使用者的所有 property
+  const properties = await db.property.findMany({
+    where: {
+      profileId: user.id, // 當前使用者的 properties
+    },
+  })
+
+  const bookings = await db.booking.findMany({
+    where: {
+      propertyId: { in: properties.map(property => property.id) },
+      isCancelled: false,
+      checkOut: {
+        gt: today, // 只取得未來的訂單
+      },
+    },
+    include: {
+      property: {
+        select: {
+          name: true,
+        },
+      },
+    },
+    orderBy: {
+      checkIn: 'asc',
+    },
+  })
+
+  return bookings.length > 0 ? bookings : []
+}
+
+
+// 取得近一年已完成的每月bookings所得
+export async function getMonthlyCompletedBookings() {
+  const user = await checkUserLogin()
+
+  const oneYearAgo = subYears(new Date(), 1); // 取得一年前的日期
+
+  // 先取得使用者的所有 property
+  const properties = await db.property.findMany({
+    where: {
+      profileId: user.id, // 當前使用者的 properties
+    },
+  })
+
+  // 如果使用者沒有任何property，直接回傳空陣列
+  if (properties.length === 0) {
+    return []
+  }
+
+  // 取得這些property下的所有未取消的 bookings
+  const bookings = await db.booking.findMany({
+    where: {
+      propertyId: { in: properties.map(property => property.id) },
+      isCancelled: false,
+      checkOut: {
+        gte: oneYearAgo, // 過濾近一年的資料
+      },
+    },
+    select: {
+      orderTotal: true,
+      checkOut: true,
+    },
+  })
+
+  // 按月份累積 `orderTotal`
+  const monthlyEarnings: Record<string, number> = {};
+
+  bookings.forEach((booking) => {
+    const monthKey = format(startOfMonth(booking.checkOut), "yyyy-MM"); // 轉成 YYYY-MM 格式
+
+    if (!monthlyEarnings[monthKey]) {
+      monthlyEarnings[monthKey] = 0
+    }
+
+    monthlyEarnings[monthKey] += booking.orderTotal
+  });
+
+  return Object.entries(monthlyEarnings).map(([month, total]) => ({
+    month,
+    total,
+  }))
+}
+
+// 取得所有已完成bookings的總金額
+export async function getTotalCompletedBookingsAmount() {
+  const user = await checkUserLogin()
+
+  const today = new Date()
+
+  // 先取得使用者的所有 property
+  const properties = await db.property.findMany({
+    where: {
+      profileId: user.id, // 當前使用者的 properties
+    },
+  });
+
+  // 如果使用者沒有任何屬性，直接回傳 0
+  if (properties.length === 0) {
+    return 0
+  }
+
+  // 取得這些屬性下的所有 bookings
+  const result = await db.booking.aggregate({
+    where: {
+      propertyId: { in: properties.map(property => property.id) },
+      isCancelled: false, // 未被取消
+      checkOut: {
+        lt: today,
+      },
+    },
+    _sum: {
+      orderTotal: true, // 計算所有 `orderTotal` 的總和
+    },
+  });
+
+  return result._sum.orderTotal || 0
+}
+
+// 取得所有房源
+export const fetchRentals = async () => {
+  const user = await checkUserLogin()
+  const rentals = await db.property.findMany({
+    where: {
+      profileId: user.id,
+    },
+    select: {
+      id: true,
+      name: true,
+      price: true,
+    },
+  });
+
+  const rentalsWithBookingSums = await Promise.all(
+    rentals.map(async (rental) => {
+      const totalNightsSum = await db.booking.aggregate({
+        where: {
+          propertyId: rental.id,
+          paymentStatus: true,
+        },
+        _sum: {
+          totalNights: true,
+        },
+      });
+
+      const orderTotalSum = await db.booking.aggregate({
+        where: {
+          propertyId: rental.id,
+          paymentStatus: true,
+        },
+        _sum: {
+          orderTotal: true,
+        },
+      });
+
+      return {
+        ...rental,
+        totalNightsSum: totalNightsSum._sum.totalNights,
+        orderTotalSum: orderTotalSum._sum.orderTotal,
+      }
+    })
+  )
+
+  return rentalsWithBookingSums
+}
+
+// 刪除房源
+export async function deleteRentalAction(propertyId: string) {
+  const user = await checkUserLogin()
+
+  try {
+    await db.property.delete({
+      where: {
+        id: propertyId,
+        profileId: user.id,
+      },
+    })
+
+    revalidatePath('/rentals')
+    return { message: '刪除成功' }
+  } catch (error) {
+    return renderError(error);
+  }
+}
+
+// 取得訂單
+export const fetchReservations = async () => {
+  const user = await checkUserLogin()
+
+  const reservations = await db.booking.findMany({
+    where: {
+      property: {
+        profileId: user.id,
+      },
+    },
+
+    orderBy: {
+      checkIn: 'desc',
+    },
+
+    include: {
+      property: {
+        select: {
+          id: true,
+          name: true,
+          price: true,
+          county: true,
+          city: true,
+        },
+      },
+    },
+  })
+  return reservations
+}
+
+
+export async function cleanupBookings() {
+  try {
+    // 查找所有未付款並且超過30分鐘未付款的訂單
+    const bookingsToCancel = await db.booking.findMany({
+      where: {
+        isCancelled: false,
+        paymentStatus: false,
+        createdAt: {
+          lt: new Date(new Date().getTime() - 30 * 60 * 1000), // 創建時間超過30分鐘
+        },
+      },
+    })
+
+    if (bookingsToCancel.length === 0) {
+      return
+    }
+
+    // 批量更新這些訂單為取消狀態
+    await db.booking.updateMany({
+      where: {
+        id: {
+          in: bookingsToCancel.map((booking) => booking.id),
+        },
+      },
+      data: { isCancelled: true },
+    })
+  } catch (error) {
+    console.error(error)
+  }
 }

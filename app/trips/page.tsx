@@ -1,10 +1,10 @@
 import TripsCard from "@/components/trips/TripsCard"
 import EmptyContent from "@/components/common/EmptyContent"
-import { fetchTrips } from "@/utils/action"
+import { cleanupBookings, fetchTrips } from "@/utils/action"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 async function TripsPage({ searchParams }: { searchParams: { tab?: string } }) {
-
+  await cleanupBookings()
   const tab = searchParams.tab === "completed" ? "completed" : "upcoming"
   const tripData = await fetchTrips()
   const today = new Date()
@@ -51,6 +51,8 @@ async function TripsPage({ searchParams }: { searchParams: { tab?: string } }) {
                         totalPrice={trip.orderTotal}
                         isCancelled={trip.isCancelled}
                         isDone={false}
+                        paymentStatus={trip.paymentStatus}
+                        createdAt={trip.createdAt}
                       />
                     )
                   })
@@ -90,6 +92,8 @@ async function TripsPage({ searchParams }: { searchParams: { tab?: string } }) {
                         isCancelled={trip.isCancelled}
                         isDone={true}
                         review={trip.review}
+                        paymentStatus={trip.paymentStatus}
+                        createdAt={trip.createdAt}
                       />
                     )
                   })
