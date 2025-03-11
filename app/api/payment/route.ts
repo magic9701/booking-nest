@@ -3,6 +3,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string)
 import { type NextRequest } from 'next/server'
 import db from '@/utils/db'
 import { formatDate } from '@/utils/helper'
+export const maxDuration = 30
 export const POST = async (req: NextRequest) => {
   const requestHeaders = new Headers(req.headers)
   const origin = requestHeaders.get('origin')

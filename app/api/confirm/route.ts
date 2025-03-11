@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation'
 
 import { type NextRequest } from 'next/server';
 import db from '@/utils/db'
-
+export const maxDuration = 30
 export const GET = async (req: NextRequest) => {
   const { searchParams } = new URL(req.url)
   const session_id = searchParams.get('session_id') as string
