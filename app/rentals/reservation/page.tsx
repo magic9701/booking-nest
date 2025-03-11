@@ -15,6 +15,7 @@ import { formatCurrency, formatDate } from '@/utils/helper'
 import { fetchReservations } from '@/utils/action'
 import { useToast } from "@/hooks/use-toast"
 import TableSkeleton from "@/components/common/TableSkeleton"
+import BookingStatus from "@/components/common/BookingStatus"
 
 type Reservation = {
   id: string
@@ -80,7 +81,7 @@ function ReservationPage() {
           </TableHeader>
           <TableBody>
             {reservationList.map((item) => {
-              const { id, orderTotal, totalNights, checkIn, checkOut, isCancelled, createdAt } = item
+              const { id, orderTotal, totalNights, checkIn, checkOut, isCancelled, createdAt, paymentStatus } = item
               const { id: propertyId, name, city, county } = item.property
               const startDate = formatDate(checkIn)
               const endDate = formatDate(checkOut)
@@ -100,7 +101,13 @@ function ReservationPage() {
                   <TableCell>{formatCurrency(orderTotal)}</TableCell>
                   <TableCell>{startDate}</TableCell>
                   <TableCell>{endDate}</TableCell>
-                  <TableCell>{isCancelled ? '取消' : '已訂房'}</TableCell>
+                  <TableCell>
+                    <BookingStatus
+                      to={checkOut} 
+                      isCancelled={isCancelled} 
+                      paymentStatus={paymentStatus} 
+                    />
+                  </TableCell>
                   <TableCell>{createdAtDate}</TableCell>
                 </TableRow>
               );

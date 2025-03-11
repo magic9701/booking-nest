@@ -501,6 +501,8 @@ export const createBookingAction = async (prevState: {
   checkOut: Date
 }) => {
   const user = await checkUserLogin()
+  let bookingId: null | string = null
+
   const { propertyId, checkIn, checkOut } = prevState
   const property = await db.property.findUnique({
     where: { id: propertyId },
@@ -518,7 +520,7 @@ export const createBookingAction = async (prevState: {
   })
 
   try {
-    await db.booking.create({
+    const booking = await db.booking.create({
       data: {
         checkIn,
         checkOut,
@@ -527,11 +529,12 @@ export const createBookingAction = async (prevState: {
         profileId: user.id,
         propertyId
       }
-    })  
+    })
+    bookingId = booking.id
   } catch (error) {
     return renderError(error)
   }
-  redirect('/trips')
+  redirect(`/checkout?bookingId=${bookingId}`)
 }
 
 // 取得user所有訂房紀錄
@@ -922,7 +925,7 @@ export const fetchReservations = async () => {
     },
 
     orderBy: {
-      createdAt: 'desc',
+      checkIn: 'desc',
     },
 
     include: {
@@ -938,4 +941,36 @@ export const fetchReservations = async () => {
     },
   })
   return reservations
+}
+
+
+export async function cleanupBookings() {
+  try {
+    // 查找所有未付款並且超過30分鐘未付款的訂單
+    const bookingsToCancel = await db.booking.findMany({
+      where: {
+        isCancelled: false,
+        paymentStatus: false,
+        createdAt: {
+          lt: new Date(new Date().getTime() - 30 * 60 * 1000), // 創建時間超過30分鐘
+        },
+      },
+    })
+
+    if (bookingsToCancel.length === 0) {
+      return
+    }
+
+    // 批量更新這些訂單為取消狀態
+    await db.booking.updateMany({
+      where: {
+        id: {
+          in: bookingsToCancel.map((booking) => booking.id),
+        },
+      },
+      data: { isCancelled: true },
+    })
+  } catch (error) {
+    console.error(error)
+  }
 }

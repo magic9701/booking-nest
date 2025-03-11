@@ -8,7 +8,7 @@ import AmenitiesList from "@/components/properties/AmenitiesList"
 import OwnerDetail from "@/components/properties/OwnerDetail"
 import { Skeleton } from "@/components/ui/skeleton"
 //
-import { fetchPropertyDetail } from "@/utils/action"
+import { cleanupBookings, fetchPropertyDetail } from "@/utils/action"
 import { Star } from 'lucide-react'
 //
 import dynamic from "next/dynamic"
@@ -22,7 +22,7 @@ const DynamicBookingWrapper = dynamic(() => import('@/components/booking/Booking
 
 async function PropertyDetailPage({params}: {params: {id: string}}) {
   const property = await fetchPropertyDetail(params.id)
-  
+  await cleanupBookings()
 
   if(!property) return (
     <EmptyContent
