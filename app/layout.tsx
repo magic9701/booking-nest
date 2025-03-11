@@ -4,7 +4,6 @@ import "./globals.css";
 import Navbar from "@/components/navbar/Navbar";
 import { ClerkProvider } from "@clerk/nextjs"
 import { Toaster } from "@/components/ui/toaster"
-import Head from 'next/head'
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
