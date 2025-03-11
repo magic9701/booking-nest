@@ -1,24 +1,26 @@
-'use client';
+'use client'
 
+import { useState } from 'react';
 import { SignOutButton } from '@clerk/nextjs';
-import { useToast } from '@/hooks/use-toast'
-import { useRouter } from 'next/navigation'
 
 function SignOutLink() {
-  const { toast } = useToast()
-  const router = useRouter()
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogout = () => {
-    router.push('/')
-    toast({ description: '登出成功' })
-  }
+  const handleSignOut = () => {
+    setIsLoading(true);
+  };
 
   return (
     <SignOutButton redirectUrl='/'>
-      <button className='w-full text-center p-1' onClick={handleLogout}>
-        登出
+      <button
+        className='w-full text-center p-1 rounded disabled:opacity-50'
+        onClick={handleSignOut}
+        disabled={isLoading}
+      >
+        {isLoading ? '登出中...' : '登出'}
       </button>
     </SignOutButton>
   );
 }
-export default SignOutLink
+
+export default SignOutLink;

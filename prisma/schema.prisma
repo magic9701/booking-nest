@@ -31,8 +31,6 @@ model Property {
   category    String
   image       String
   address     String
-  latitude    Float
-  longitude   Float
   city        String
   county      String
   description String

@@ -49,7 +49,7 @@ function ReviewList(props: ReviewListProps) {
         <div>
 
           {/* 評論小於4 */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-4 mb-2">
             {reviewsToDisplay.length > 0 && reviewsToDisplay.map((review) => (
               <ReviewCard 
                 key={review.id}
@@ -62,10 +62,7 @@ function ReviewList(props: ReviewListProps) {
             ))}
           </div>
 
-          {/* 評論大於4 */}
-          {reviews.length > 4 && (
-            <ReviewDialog reviewList={reviews} />
-          )}
+          <ReviewDialog reviewList={reviews} />
         </div>
       )}
     </div>

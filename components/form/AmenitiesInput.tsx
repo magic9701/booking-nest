@@ -3,10 +3,11 @@ import { useState } from 'react';
 import { amenities, Amenity } from '@/data/amenities';
 import { Checkbox } from '@/components/ui/checkbox';
 
-function AmenitiesInput() {
+function AmenitiesInput({ defaultValue }: { defaultValue?: Amenity[] }) {
   const [selectedAmenities, setSelectedAmenities] = useState<Amenity[]>(
-    amenities
-  );
+    defaultValue || amenities
+  )
+
   const handleChange = (amenity: Amenity) => {
     setSelectedAmenities((prev) => {
       return prev.map((a) => {

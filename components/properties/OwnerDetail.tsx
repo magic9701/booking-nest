@@ -23,8 +23,8 @@ function OwnerDetail({ profileImage, username, createdAt, size = "large" }: Owne
   return (
     <div className={`flex items-center ${gapSize}`}>
       {/* 屋主大頭貼 */}
-      <div className={`rounded-full overflow-hidden border`} style={{ width: imageSize, height: imageSize }}>
-        <Image src={profileImage} alt={username} width={imageSize} height={imageSize} className="object-cover" />
+      <div className='relative rounded-full overflow-hidden border' style={{ width: imageSize, height: imageSize }}>
+        <Image src={profileImage} alt={username} fill className="object-cover" />
       </div>
 
       {/* 屋主資訊 */}

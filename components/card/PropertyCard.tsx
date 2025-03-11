@@ -22,7 +22,7 @@ function PropertyCard({ property }: { property: PropertyCardProps }) {
           <span className="text-sm text-gray-400">{getCategoryLabel(category)} | {city} {county}</span>
           <div className='flex items-center justify-end mt-6'>
             <span className="text-xl mr-2">TWD {price}</span>
-            <span className="text-m">起 / 晚</span>
+            <span className="text-m">/ 晚</span>
           </div>
         </div>
       </Link>
